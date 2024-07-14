@@ -5,6 +5,7 @@ This sample is originally sourced from the Apple Developer Connection July 2009 
 - [Source 1 from Github](https://github.com/fruitsamples/CreateMovieFromReferences)
 - [Source 2 from Github](https://github.com/cellularmitosis/ADC-reference-library-2009-july/tree/main/samplecode/CreateMovieFromReferences/CreateMovieFromReferences)
 
+Updated by Rebecca Ann Heineman [becky@burgerbecky.com](mailto:becky@burgerbecky.com)
 
 ## OVERVIEW
 
@@ -25,7 +26,7 @@ Here's how to create a movie using this technique:
 
 As just described, you create a Movie with a video track in memory, with media for the video track that has the file as its data reference. However, the first 16 bytes of the video frames file must be overwritten with the bit pattern that QuickTime will later recognize as the start of the 'mdat' atom (the atom that specifies the movie sample data), which it will patch when the movie resource is appended to the file:
 
-(note: these are big-endian)
+(Note: these are big-endian)
 
 ```
     0x00000008
@@ -38,9 +39,9 @@ Then the first compressed video sample can be written at byte offset 16 in the f
 
 When all of the compressed samples have been written to the file, the eof marker should be set to the end of the last compressed video sample. Then AddMovieToStorage can be called to cause the 'mdat' atom to be properly updated and the movie resource to be appended to the file.
 
-## ABOUT THE "VIDEOFRAMES" FILE
+## ABOUT THE "VideoFrames.bin" FILE
 
-The file "VideoFrames" included with this sample contains video frames with the following characteristics:
+The file "VideoFrames.bin" included with this sample in the folder "``data``" contains video frames with the following characteristics:
 
 | Label             | Value  |
 | ----------------- | ------ |
@@ -59,27 +60,27 @@ The sample is built as a command-line tool on both Mac and Windows.
 
 On Macintosh, an Xcode 2.4.1 project is provided. 
 
-On Windows, a Microsoft Visual Studio C++ project is provided.
+On Windows, Microsoft Visual Studio 2022 C++, Open Watcom 1.9, and Codewarrior 9 for Windows projects are provided.
 
 ## RUNNING THE SAMPLE
 
 This command-line tool expects only an "-input" parameter which specifies the video frames file from which the movie will be constructed. A sample video frames file "VideoFrames" is provided. 
 
-IMPORTANT: When you run the tool the specified video frames file is converted into a QuickTime movie -- you need only append the ".mov" extension to the file name after running the tool and it should open in QuickTime Player when you double-click the file.
+**IMPORTANT:** When you run the tool the specified video frames file is converted into a QuickTime movie -- you need only append the ".mov" extension to the file name after running the tool and it should open in QuickTime Player when you double-click the file. The file is **OVERWRITTEN**
 
 On Macintosh, you can run the tool from the Terminal application. Here's how to run the tool from the Terminal specifying the included video frames file:
 
-1) set the directory to the folder containing the sample code project "CreateMovieFromReferences"
-2) launch the tool and specify the "VideoFrames" frames file as the input file like this:
+1) Set the directory to the folder containing the sample code project "CreateMovieFromReferences"
+2) Launch the tool and specify the "VideoFrames" frames file as the input file like this:
 
-$ ./build/Release/CreateMovieFromReferences -input testFile/VideoFrames
+``$ ./bin/movie_from_refxc3osx -input VideoFrames.bin``
 
 On Windows, you can run the tool from the Command Prompt like this:
 
-1) set the directory to the folder containing the sample code project "CreateMovieFromReferences"
-2) launch the tool and specify the "VideoFrames" frames file as the input file like this:
+1) Set the directory to the folder containing the sample code project "CreateMovieFromReferences"
+2) Launch the tool and specify the "VideoFrames" frames file as the input file like this:
 
-C:\MediaSampleRefsDemo> Release\mediasamplerefsdemo -input testFile\VideoFrames
+``C:\samples\movie_from_ref> bin\movie_from_refv22ltc -input VideoFrames.bin``
 
 ## OTHER NOTES
 
