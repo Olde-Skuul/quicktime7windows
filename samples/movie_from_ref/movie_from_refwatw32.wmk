@@ -1,0 +1,233 @@
+#
+# Build movie_from_ref with WMAKE
+# Generated with makeprojects.watcom
+#
+# Require the environment variable WATCOM set to the OpenWatcom folder
+# Example: WATCOM=C:\WATCOM
+#
+
+# This speeds up the building process for Watcom because it
+# keeps the apps in memory and doesn't have to reload for every source file
+# Note: There is a bug that if the wlib app is loaded, it will not
+# get the proper WOW file if a full build is performed
+
+# The bug is gone from Watcom 1.2
+
+!ifdef %WATCOM
+!ifdef __LOADDLL__
+!loaddll wcc $(%WATCOM)/binnt/wccd
+!loaddll wccaxp $(%WATCOM)/binnt/wccdaxp
+!loaddll wcc386 $(%WATCOM)/binnt/wccd386
+!loaddll wpp $(%WATCOM)/binnt/wppdi86
+!loaddll wppaxp $(%WATCOM)/binnt/wppdaxp
+!loaddll wpp386 $(%WATCOM)/binnt/wppd386
+!loaddll wlink $(%WATCOM)/binnt/wlinkd
+!loaddll wlib $(%WATCOM)/binnt/wlibd
+!endif
+!endif
+
+#
+# Custom output files
+#
+
+EXTRA_OBJS=
+
+#
+# List the names of all of the final binaries to build and clean
+#
+
+all: Release .SYMBOLIC
+	@%null
+
+clean: clean_Release .SYMBOLIC
+	@%null
+
+#
+# Configurations
+#
+
+Release: Releasew32 .SYMBOLIC
+	@%null
+
+clean_Release: clean_Releasew32 .SYMBOLIC
+	@%null
+
+#
+# Platforms
+#
+
+w32: Releasew32 .SYMBOLIC
+	@%null
+
+clean_w32: clean_Releasew32 .SYMBOLIC
+	@%null
+
+#
+# List of binaries to build or clean
+#
+
+Releasew32: .SYMBOLIC
+	@if not exist bin @mkdir bin
+	@if not exist "temp\movie_from_refwatw32rel" @mkdir "temp\movie_from_refwatw32rel"
+	@set CONFIG=Release
+	@set TARGET=w32
+	@%make bin\movie_from_refwatw32rel.exe
+
+clean_Releasew32: .SYMBOLIC
+	@if exist temp\movie_from_refwatw32rel @rmdir /s /q temp\movie_from_refwatw32rel
+	@if exist bin\movie_from_refwatw32rel.exe @del /q bin\movie_from_refwatw32rel.exe
+	@-if exist bin @rmdir bin 2>NUL
+	@-if exist temp @rmdir temp 2>NUL
+
+#
+# Create the folder for the binary output
+#
+
+bin:
+	@if not exist bin @mkdir bin
+
+temp:
+	@if not exist temp @mkdir temp
+
+#
+# Disable building this make file
+#
+
+movie_from_refwatw32.wmk:
+	@%null
+
+#
+# Required environment variables
+#
+
+!ifndef %WATCOM
+!error the environment variable WATCOM was not declared
+!endif
+
+#
+# Default configuration
+#
+
+!ifndef CONFIG
+CONFIG = Release
+!endif
+
+#
+# Default target
+#
+
+!ifndef TARGET
+TARGET = w32
+!endif
+
+#
+# Directory name fragments
+#
+
+TARGET_SUFFIX_w32 = w32
+
+CONFIG_SUFFIX_Release = rel
+
+#
+# Base name of the temp directory
+#
+
+BASE_TEMP_DIR = temp\movie_from_ref
+BASE_SUFFIX = wat$(TARGET_SUFFIX_$(%TARGET))$(CONFIG_SUFFIX_$(%CONFIG))
+TEMP_DIR = temp\movie_from_ref$(BASE_SUFFIX)
+
+#
+# Set the set of known files supported
+# Note: They are in the reverse order of building. .c is built first, then .x86
+# until the .exe or .lib files are built
+#
+
+.extensions:
+.extensions: .exe .exp .lib .obj .h .cpp .x86 .c .i86
+
+#
+# SOURCE_DIRS = Work directories for the source code
+#
+
+SOURCE_DIRS =source
+
+#
+# INCLUDE_DIRS = Header includes
+#
+
+INCLUDE_DIRS = $(SOURCE_DIRS)
+INCLUDE_DIRS +=;../../CIncludes
+
+#
+# Tell WMAKE where to find the files to work with
+#
+
+.c: $(SOURCE_DIRS)
+.cpp: $(SOURCE_DIRS)
+.x86: $(SOURCE_DIRS)
+.i86: $(SOURCE_DIRS)
+
+#
+# Set the compiler flags for each of the build types
+#
+
+CFlagsReleasew32= -bm -bt=NT -dTYPE_BOOL=1 -dTARGET_CPU_X86=1 -dTARGET_OS_WIN32=1 -i="$(%WATCOM)/h;$(%WATCOM)/h/nt" -d0 -oaxsh -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN32 -D_CONSOLE -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS
+
+#
+# Set the assembler flags for each of the build types
+#
+
+AFlagsReleasew32= -d__WIN32__=1 -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN32 -D_CONSOLE -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS
+
+#
+# Set the Linker flags for each of the build types
+#
+
+LFlagsReleasew32= system nt libp ..\..\Libraries LIBRARY Kernel32.lib,Gdi32.lib,Shell32.lib,Ole32.lib,User32.lib,Advapi32.lib,version.lib,Ws2_32.lib,Comctl32.lib,WinMM.lib,QTMLClient.lib
+
+# Now, set the compiler flags
+
+CL=WCC386 -6r -fp6 -w4 -ei -j -mf -zq -zp=8 -wcd=7 -i="$(INCLUDE_DIRS)"
+CP=WPP386 -6r -fp6 -w4 -ei -j -mf -zq -zp=8 -wcd=7 -i="$(INCLUDE_DIRS)"
+ASM=WASM -5r -fp6 -w4 -zq -d__WATCOM__=1
+LINK=*WLINK option caseexact option quiet PATH $(%WATCOM)/binnt;$(%WATCOM)/binw;.
+
+# Set the default build rules
+# Requires ASM, CP to be set
+
+# Macro expansion is on page 93 of the C/C++ Tools User's Guide
+# $^* = C:\dir\target (No extension)
+# $[* = C:\dir\dep (No extension)
+# $^@ = C:\dir\target.ext
+# $^: = C:\dir\
+
+.i86.obj : .AUTODEPEND
+	@echo $[&.i86 / $(%CONFIG) / $(%TARGET)
+	@$(ASM) -0 -w4 -zq -d__WATCOM__=1 $(AFlags$(%CONFIG)$(%TARGET)) $[*.i86 -fo=$^@ -fr=$^*.err
+
+.x86.obj : .AUTODEPEND
+	@echo $[&.x86 / $(%CONFIG) / $(%TARGET)
+	@$(ASM) $(AFlags$(%CONFIG)$(%TARGET)) $[*.x86 -fo=$^@ -fr=$^*.err
+
+.c.obj : .AUTODEPEND
+	@echo $[&.c / $(%CONFIG) / $(%TARGET)
+	@$(CL) $(CFlags$(%CONFIG)$(%TARGET)) $[*.c -fo=$^@ -fr=$^*.err
+
+.cpp.obj : .AUTODEPEND
+	@echo $[&.cpp / $(%CONFIG) / $(%TARGET)
+	@$(CP) $(CFlags$(%CONFIG)$(%TARGET)) $[*.cpp -fo=$^@ -fr=$^*.err
+
+#
+# Object files to work with for the library
+#
+
+OBJS= $(A)/main.obj
+
+#
+# A = The object file temp folder
+#
+
+A = $(BASE_TEMP_DIR)watw32rel
+bin\movie_from_refwatw32rel.exe: $(EXTRA_OBJS) $+$(OBJS)$- movie_from_refwatw32.wmk
+	@SET WOW={$+$(OBJS)$-}
+	@$(LINK) $(LFlagsReleasew32) NAME $^@ FILE @wow
