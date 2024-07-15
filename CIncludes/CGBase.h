@@ -36,7 +36,7 @@
 
 /* if stdint.h has been include, don't define same types */
 #if TARGET_OS_WIN32
-#ifndef _STDINT_H
+#if !defined(_STDINT_H) && !(defined(_MSC_VER) && (_MSC_VER>=1600))
 #if __MWERKS__ <= 0x2300
 typedef signed long                     int32_t;
 #endif

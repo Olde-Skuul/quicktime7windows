@@ -78,6 +78,8 @@ extern "C" {
 ********************************************************************************/
 #if (defined(__MWERKS__) && defined(__cmath__)) || (TARGET_RT_MAC_MACHO && defined(__MATH__))
 /* these types were already defined in math.h */
+#elif (defined(_MSC_VER) && defined(_INC_MATH))
+/* Already defined in corecrt_math.h */
 #else
 #if TARGET_CPU_PPC
 typedef float                           float_t;
@@ -119,7 +121,9 @@ typedef double                          double_t;
     #define   NAN                     nan("255")
   #endif
 #else
+  #if !defined(NAN)
   #define     NAN                     sqrt(-1)
+  #endif
 #endif
 
 #if TARGET_CPU_PPC

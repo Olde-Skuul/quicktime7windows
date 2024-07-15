@@ -37,8 +37,12 @@
 	#include <stdint.h>
 	#include <stdbool.h>
 #else
-	// mostly for the benefit of MSVC
+	// mostly for the benefit of MSVC before 2010
+#if defined(_MSC_VER) && (_MSC_VER>=1600)
+    #include <stdint.h>
+#else
 	#include <GNUCompatibility/stdint.h>
+#endif
 	#include <GNUCompatibility/stdbool.h>
 	#if TARGET_OS_WIN32
 		#undef pascal

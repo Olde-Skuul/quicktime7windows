@@ -44,7 +44,11 @@ extern "C" {
 
 
 #if TYPE_LONGLONG && TARGET_OS_WIN32
+  #ifdef __GNUC__ /* GCC */
+    #define S64Max() 9223372036854775807LL
+  #else
     #define S64Max() 9223372036854775807i64
+  #endif
 #elif TYPE_LONGLONG && defined(__MWERKS__) && (__MWERKS__ < 0x1800)
     #define S64Max() 9223372036854775807
 #else

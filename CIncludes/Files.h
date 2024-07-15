@@ -70,7 +70,10 @@ extern "C" {
     #include <sys/types.h>
 #else
 // #if TARGET_OS_WIN32
+  #ifndef _PID_T_
+    #define _PID_T_
     typedef int pid_t;
+  #endif
 #endif
 
 /* HFSUniStr255 is the Unicode equivalent of Str255 */

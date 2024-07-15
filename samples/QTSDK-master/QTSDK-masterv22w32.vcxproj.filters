@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="source\general.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClCompile Include="source\QTSDK.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\arghandler.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\disney24.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\stringtools.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <Filter Include="source">
+      <UniqueIdentifier>C25B4702-6B41-378D-870D-4E849368C690</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
