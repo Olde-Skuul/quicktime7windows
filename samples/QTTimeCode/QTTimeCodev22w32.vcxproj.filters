@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="source\ComApplication.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\ComFramework.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\QTTimeCode.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\QTUtilities.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WinFramework.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\WinPrefix.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="source\windows\ComResource.h">
+      <Filter>source\windows</Filter>
+    </ClInclude>
+    <ClCompile Include="source\ComApplication.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\ComFramework.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\QTTimeCode.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\QTUtilities.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="source\WinFramework.c">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ResourceCompile Include="source\windows\QTTimeCode.rc">
+      <Filter>source\windows</Filter>
+    </ResourceCompile>
+    <Image Include="source\windows\QTTimeCode.ico">
+      <Filter>source\windows</Filter>
+    </Image>
+    <Image Include="source\windows\movie.ico">
+      <Filter>source\windows</Filter>
+    </Image>
+    <Filter Include="source">
+      <UniqueIdentifier>BEAFEB02-5F38-388A-B4EB-54BA717A56C1</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\windows">
+      <UniqueIdentifier>3BA59713-98DB-37F6-9EF4-E12BA3872CB9</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
