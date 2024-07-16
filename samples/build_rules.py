@@ -147,7 +147,7 @@ def configuration_settings(configuration):
 
     # Where is this file?
     this_dir = os.path.dirname(os.path.abspath(__file__))
+    this_dir = os.path.dirname(this_dir)
 
     # Add the root folder to link in the library relative to this folder
-    configuration.library_rules_list.append(
-        os.path.dirname(this_dir))
+    configuration.library_rules_list.append(this_dir)
