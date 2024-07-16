@@ -107,7 +107,11 @@ extern "C" {
     #undef CF_EXPORT
 	#if defined(CF_BUILDING_CF_AS_LIB)
     // we're building CF as a library
-	#define CF_EXPORT extern
+#if defined(__WATCOMC__)
+	#define CF_EXPORT extern __declspec(__cdecl)
+#else
+    #define CF_EXPORT extern
+#endif
 	#elif defined(CF_BUILDING_CF)
     // we're building CF as a DLL
 	#define CF_EXPORT __declspec(dllexport) extern
