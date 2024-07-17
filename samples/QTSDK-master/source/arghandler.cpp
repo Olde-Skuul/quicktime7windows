@@ -2,19 +2,29 @@
 #include <math.h>
 using namespace std;
 
-const vector<float> SUPPORTED_FPS{24, 23.98, 23.976, 25, 30, 29.97, 60, 59.94};
+static const float SUPPORTED_FPS[] = {
+	24.f, 23.98f, 23.976f, 25.f, 30.f, 29.97f, 60.f, 59.94f};
+
+// these singlecmds will appear in the tasks attribute (string vector)
+const char* singlecmds[] = {"flagaudio", "setTC", "me6ch", "disney24"};
+
+namespace vectortools {
+static bool contains(const commands& inmap, const string& item)
+{
+	return const_cast<commands&>(inmap).find(item) != inmap.end();
+}
+}
 
 void argHandler::parsePath()
 {
 	FILE* file;
-	errno_t openerr;
-	openerr = fopen_s(&file, this->params["path"].c_str(), "r");
+	file = fopen(this->params["path"].c_str(), "r");
 	if (file != NULL) {
 		fclose(file);
 		this->fileURL = this->params["path"];
 	} else {
 		cout << "Provided path does not appear to be a valid file: "
-			 << this->params["path"] << "\n";
+			 << this->params["path"].c_str() << "\n";
 		exit(1);
 	}
 }
@@ -28,22 +38,29 @@ void argHandler::parseTC()
 		exit(1);
 	}
 
-	this->TCR.t.hours = (UInt8)stoi(tcstr[0]);
-	this->TCR.t.minutes = (UInt8)stoi(tcstr[1]);
-	this->TCR.t.seconds = (UInt8)stoi(tcstr[2]);
-	this->TCR.t.frames = (UInt8)stoi(tcstr[3]);
+	this->TCR.t.hours = (UInt8)atoi(tcstr[0].c_str());
+	this->TCR.t.minutes = (UInt8)atoi(tcstr[1].c_str());
+	this->TCR.t.seconds = (UInt8)atoi(tcstr[2].c_str());
+	this->TCR.t.frames = (UInt8)atoi(tcstr[3].c_str());
 }
 
 void argHandler::parseFPS()
 {
 	try {
-		this->fps = stof(this->params["fps"]);
+		this->fps = static_cast<float>(atof(this->params["fps"].c_str()));
 	} catch (const exception& e) {
 		print(e.what());
 		exit(1);
 	}
 
-	if (!vectortools::contains(SUPPORTED_FPS, this->fps)) {
+	int i = 0;
+	do {
+		if (this->fps == SUPPORTED_FPS[i]) {
+			break;
+		}
+	} while (++i < (sizeof(SUPPORTED_FPS) / sizeof(SUPPORTED_FPS[0])));
+
+	if (i == (sizeof(SUPPORTED_FPS) / sizeof(SUPPORTED_FPS[0]))) {
 		cout << "Unsupported framerate: " << this->fps << endl;
 		exit(1);
 	}
@@ -59,7 +76,11 @@ void argHandler::parseFPS()
 		fpsint = fpsint + 1;
 	}
 
-	this->TCD = TimeCodeDef{0, ((UInt8)fpsint) * 1000, divisor, (UInt8)fpsint};
+	this->TCD.flags = 0;
+	this->TCD.fTimeScale = ((UInt8)fpsint) * 1000;
+	this->TCD.frameDuration = divisor;
+	this->TCD.numFrames = (UInt8)fpsint;
+	this->TCD.padding = 0;
 }
 
 void argHandler::parsechannels()
@@ -72,18 +93,17 @@ void argHandler::parsechannels()
 		exit(1);
 	}
 
-	this->channelRange.at(0) = stoi(channelstr[0]);
-	this->channelRange.at(1) = stoi(channelstr[1]);
+	this->m_channelRange[0] = atoi(channelstr[0].c_str());
+	this->m_channelRange[1] = atoi(channelstr[1].c_str());
 
-	if (this->channelRange.at(0) < 1 || this->channelRange.at(1) < 1 ||
-		this->channelRange.at(1) < this->channelRange.at(0)) {
+	if (this->m_channelRange[0] < 1 || this->m_channelRange[1] < 1 ||
+		this->m_channelRange[1] < this->m_channelRange[0]) {
 		print(
 			"Incorrect input channels. Input channels cannot be less than 1 and the second channel must be larger than the first");
 		exit(1);
 	}
 
-	this->numOfTracks =
-		(this->channelRange.at(1) - this->channelRange.at(0)) + 1;
+	this->numOfTracks = (this->m_channelRange[1] - this->m_channelRange[0]) + 1;
 
 	if (this->numOfTracks != 2 && this->numOfTracks != 6 &&
 		this->numOfTracks != 8 && this->numOfTracks != 24) {
@@ -96,22 +116,32 @@ void argHandler::parsecmds()
 {
 	string cmd;
 	unsigned int counter = 0;
-	for (auto i : this->all) {
-		if (i[0] == '-') {
+	for (vector<string>::iterator i = this->all.begin(); i != this->all.end();
+		 ++i) {
+		if ((*i)[0] == '-') {
 			// Removes '-'
-			cmd = i.substr(1, (i.size() - 1));
+			cmd = (*i).substr(1, ((*i).size() - 1));
 
-			if (vectortools::contains(this->singlecmds, cmd))
-				this->tasks.emplace_back(cmd);
-			else if (counter + 1 < this->all.size()) {
-				if (this->all[counter + 1][0] != '-')
+			int j = 0;
+			do {
+				if (!strcmp(cmd.c_str(), singlecmds[j])) {
+					break;
+				}
+			} while (++j < (sizeof(singlecmds) / sizeof(singlecmds[0])));
+
+			if (j != (sizeof(singlecmds) / sizeof(singlecmds[0]))) {
+				this->tasks.push_back(cmd);
+			} else if (counter + 1 < this->all.size()) {
+				if (this->all[counter + 1][0] != '-') {
+
 					this->params[cmd] = this->all[counter + 1];
-				else {
-					cout << "Empty command parameter for " << i << endl;
+				} else {
+					cout << "Empty command parameter for " << (*i).c_str()
+						 << endl;
 					exit(1);
 				}
 			} else {
-				cout << "Empty command parameter for " << i << endl;
+				cout << "Empty command parameter for " << (*i).c_str() << endl;
 				exit(1);
 			}
 		}
@@ -121,20 +151,23 @@ void argHandler::parsecmds()
 
 argHandler::argHandler(int& argc, char* argv[])
 {
+	m_channelRange[0] = 0;
+	m_channelRange[1] = 0;
+
 	if (argc < 3) {
 		print("Not enough arguments");
 		exit(1);
 	}
 
 	for (int i = 0; i < argc; ++i) {
-		this->all.emplace_back(argv[i]);
+		this->all.push_back(argv[i]);
 	}
 
 	this->parsecmds();
 
-	if (vectortools::contains(this->params, (string) "path"))
+	if (vectortools::contains(this->params, string("path"))) {
 		this->parsePath();
-	else {
+	} else {
 		print("No input path specified");
 		exit(1);
 	}

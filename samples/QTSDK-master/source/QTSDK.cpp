@@ -1,18 +1,33 @@
 #include "general.h"
 
+#if !defined(__MACH__)
 #include <CoreAudioTypes.h>
 #include <Movies.h>
 #include <QTML.h>
-
+#else
+#include <CoreAudio/CoreAudio.h>
+#include <QuickTime/Movies.h>
+#include <QuickTime/QTML.h>
+#endif
 using namespace std;
 
-void initQT(errorDict* errors)
+namespace vectortools {
+bool contains(const vector<string>& vecx, const string& xitem)
 {
-	(*errors)["init"] = InitializeQTML(0L);
-	(*errors)["enter"] = EnterMovies();
+	return (std::find(vecx.begin(), vecx.end(), xitem) != vecx.end());
+}
 }
 
-Track* getTracks(Movie& movie, array<int, 2> range)
+static void initQT(errorDict* errors)
+{
+	errorDict& rVal = *errors;
+#if !defined(__MACH__)
+	rVal["init"] = InitializeQTML(0L);
+#endif
+	rVal["enter"] = EnterMovies();
+}
+
+static Track* getTracks(Movie& movie, const int range[2])
 {
 	const int numOfTracks = (range[1] - range[0]) + 1;
 	Track* allTracks = new Track[numOfTracks];
@@ -22,7 +37,8 @@ Track* getTracks(Movie& movie, array<int, 2> range)
 	return allTracks;
 }
 
-void buildLayouts(int& totalChs, AudioChannelLayout* layouts, bool& me6ch)
+static void buildLayouts(
+	int& totalChs, AudioChannelLayout* layouts, bool& me6ch)
 {
 	AudioChannelLabel currentch;
 	for (int i = 0; i < totalChs; i++) {
@@ -33,33 +49,54 @@ void buildLayouts(int& totalChs, AudioChannelLayout* layouts, bool& me6ch)
 				currentch = 2;
 			}
 
-			layouts[i] = {kAudioChannelLayoutTag_UseChannelDescriptions, NULL,
-				1, {currentch, NULL, NULL}};
-
+			layouts[i].mChannelLayoutTag =
+				kAudioChannelLayoutTag_UseChannelDescriptions;
+			layouts[i].mChannelBitmap = 0;
+			layouts[i].mNumberChannelDescriptions = 1;
+			layouts[i].mChannelDescriptions[0].mChannelLabel = currentch;
+			layouts[i].mChannelDescriptions[0].mChannelFlags = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[0] = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[1] = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[2] = 0;
 		} else {
 			if (i > 5) {
-				currentch = i + 32;
+				currentch = static_cast<AudioChannelLabel>(i + 32);
 			} else {
-				currentch = i + 1;
+				currentch = static_cast<AudioChannelLabel>(i + 1);
 			}
 
-			layouts[i] = {kAudioChannelLayoutTag_UseChannelDescriptions, NULL,
-				1, {currentch, NULL, NULL}};
+			layouts[i].mChannelLayoutTag =
+				kAudioChannelLayoutTag_UseChannelDescriptions;
+			layouts[i].mChannelBitmap = 0;
+			layouts[i].mNumberChannelDescriptions = 1;
+			layouts[i].mChannelDescriptions[0].mChannelLabel = currentch;
+			layouts[i].mChannelDescriptions[0].mChannelFlags = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[0] = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[1] = 0;
+			layouts[i].mChannelDescriptions[0].mCoordinates[2] = 0;
 		}
 	}
 }
 
-void disneyLayout(int& totalChs, AudioChannelLayout* layouts)
+static void disneyLayout(int& totalChs, AudioChannelLayout* layouts)
 {
 	AudioChannelLabel labelID;
 	for (UInt32 i = 0; i < (UInt32)totalChs; i++) {
-		labelID = Disney::Disney24ChConfig.at(i + 1);
-		layouts[i] = {kAudioChannelLayoutTag_UseChannelDescriptions, NULL, 1,
-			{labelID, NULL, NULL}};
+		labelID = static_cast<AudioChannelLabel>(
+			Disney::Disney24ChConfig(static_cast<int>(i + 1)));
+		layouts[i].mChannelLayoutTag =
+			kAudioChannelLayoutTag_UseChannelDescriptions;
+		layouts[i].mChannelBitmap = 0;
+		layouts[i].mNumberChannelDescriptions = 1;
+		layouts[i].mChannelDescriptions[0].mChannelLabel = labelID;
+		layouts[i].mChannelDescriptions[0].mChannelFlags = 0;
+		layouts[i].mChannelDescriptions[0].mCoordinates[0] = 0;
+		layouts[i].mChannelDescriptions[0].mCoordinates[1] = 0;
+		layouts[i].mChannelDescriptions[0].mCoordinates[2] = 0;
 	}
 }
 
-void FlagQT(Movie& myMovie, array<int, 2>& channels, int& numberOfTracks,
+static void FlagQT(Movie& myMovie, const int channels[2], int& numberOfTracks,
 	bool& me6ch, bool& disney24, errorDict& converterrors)
 {
 	Track* workingTracks = getTracks(myMovie, channels);
@@ -78,7 +115,7 @@ void FlagQT(Movie& myMovie, array<int, 2>& channels, int& numberOfTracks,
 	}
 }
 
-void SetTC(const Movie& myMovie, errorDict& converterrors,
+static void SetTC(const Movie& myMovie, errorDict& converterrors,
 	TimeCodeRecord& myTRR, TimeCodeDef& myTCD)
 {
 	Track videotrack =
@@ -116,9 +153,9 @@ void SetTC(const Movie& myMovie, errorDict& converterrors,
 	**framenum = EndianS32_NtoB(**framenum);
 
 	converterrors["BeginEdits"] = BeginMediaEdits(newTCmedia);
-	converterrors["AddMediaSample"] =
-		AddMediaSample(newTCmedia, frameH, 0, GetHandleSize(frameH), myMovieDur,
-			SampleDescriptionHandle(myDesc), 1, 0, 0);
+	converterrors["AddMediaSample"] = AddMediaSample(newTCmedia, frameH, 0,
+		static_cast<unsigned long>(GetHandleSize(frameH)), myMovieDur,
+		SampleDescriptionHandle(myDesc), 1, 0, 0);
 	converterrors["EndEdits"] = EndMediaEdits(newTCmedia);
 
 	converterrors["InsertMedia"] =
@@ -129,13 +166,15 @@ void SetTC(const Movie& myMovie, errorDict& converterrors,
 
 int main(int argc, char* argv[])
 {
-	argHandler args{argc, argv};
-	errorDict initerrors{};
+	argHandler args(argc, argv);
+	errorDict initerrors;
 	initQT(&initerrors);
 
-	for (auto item : initerrors) {
-		if (item.second != 0) {
-			cout << "Init QT error in " << "'" << item.first << "'" << endl;
+	for (errorDict::iterator item = initerrors.begin();
+		 item != initerrors.end(); item++) {
+		if ((*item).second != 0) {
+			cout << "Init QT error in " << "'" << (*item).first.c_str() << "'"
+				 << endl;
 			exit(1);
 		}
 	}
@@ -149,8 +188,17 @@ int main(int argc, char* argv[])
 	Boolean wasChanged;
 	errorDict converterrors;
 
+#if !defined(__MACH__)
 	converterrors["PathToSpec"] = NativePathNameToFSSpec(
 		const_cast<char*>(args.fileURL.c_str()), (FSSpec*)myFSptr, 0);
+#else
+	Boolean isdir;
+	FSRef fsref;
+	converterrors["PathToSpec"] = FSPathMakeRef(
+		reinterpret_cast<const UInt8*>(args.fileURL.c_str()), &fsref, &isdir);
+	FSGetCatalogInfo(
+		&fsref, kFSCatInfoNone, NULL, NULL, (FSSpec*)myFSptr, NULL);
+#endif
 	converterrors["OpenMovie"] = OpenMovieFile(myFSptr, &myRefNum, 0);
 	converterrors["NewMovie"] = NewMovieFromFile(
 		&myMovie, myRefNum, &myResID, myStringPtr, 0, &wasChanged);
@@ -169,7 +217,7 @@ int main(int argc, char* argv[])
 		bool me6ch = vectortools::contains(args.tasks, string("me6ch"));
 		bool disney24 = vectortools::contains(args.tasks, string("disney24"));
 		{
-			FlagQT(myMovie, args.channelRange, args.numOfTracks, me6ch,
+			FlagQT(myMovie, args.m_channelRange, args.numOfTracks, me6ch,
 				disney24, converterrors);
 		}
 	}
@@ -182,9 +230,11 @@ int main(int argc, char* argv[])
 	converterrors["CloseMovie"] = CloseMovieFile(myRefNum);
 	converterrors["General"] = GetMoviesError();
 
-	for (auto i : converterrors) {
-		if (i.second != 0) {
-			cout << "Error from " << i.first << ". Error: " << i.second << endl;
+	for (errorDict::iterator item2 = converterrors.begin();
+		 item2 != converterrors.end(); item2++) {
+		if ((*item2).second != 0) {
+			cout << "Error from " << (*item2).first.c_str()
+				 << ". Error: " << (*item2).second << endl;
 			exit(1);
 		}
 	}

@@ -1,14 +1,18 @@
 #pragma once
 #include <algorithm>
-#include <array>
 #include <iostream>
 #include <map>
+#include <math.h>
 #include <stdio.h>
 #include <string>
 #include <vector>
 
+#if !defined(__MACH__)
 #include <MacTypes.h>
 #include <QuickTimeComponents.h>
+#else
+#include <QuickTime/QuickTime.h>
+#endif
 
 using namespace std;
 
@@ -21,32 +25,20 @@ void print(T toprint)
 	std::cout << toprint << std::endl;
 }
 
-namespace vectortools {
-template<typename T>
-bool contains(const vector<T>& vec, const T& item)
-{
-	return (std::find(vec.begin(), vec.end(), item) != vec.end());
-}
-
-template<typename T>
-bool contains(const commands& inmap, const T& item)
-{
-	return (inmap.find(item) != inmap.end());
-}
-}
-
 namespace stringtools {
 vector<string> split(const string& instring, const string& delim);
 }
 
 namespace Disney {
-extern const map<int, int> Disney24ChConfig;
+extern int Disney24ChConfig(int iIndex);
+}
+
+namespace vectortools {
+extern bool contains(const vector<string>& vecx, const string& xitem);
 }
 
 class argHandler {
 private:
-	// these singlecmds will appear in the tasks attribute (string vector)
-	const vector<string> singlecmds{"flagaudio", "setTC", "me6ch", "disney24"};
 	vector<string> all;
 	commands params;
 
@@ -58,7 +50,7 @@ private:
 
 public:
 	vector<string> tasks;
-	array<int, 2> channelRange{};
+	int m_channelRange[2];
 	int numOfTracks;
 	string fileURL;
 	TimeCodeRecord TCR;
