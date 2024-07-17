@@ -33,7 +33,7 @@
 	#define CF_BUILDING_CF_AS_LIB		1
 #endif
 
-#if defined(__GNUC__) || defined(__MWERKS__)
+#if defined(__GNUC__) || defined(__MWERKS__) || defined(__WATCOMC__)
 	#include <stdint.h>
 	#include <stdbool.h>
 #else
@@ -131,7 +131,7 @@ extern "C" {
 #if !defined(CF_INLINE)
     #if defined(__GNUC__)
 	#define CF_INLINE static __inline__
-    #elif defined(__MWERKS__) || defined(__cplusplus)
+    #elif defined(__MWERKS__) || defined(__cplusplus) || defined(__WATCOMC__)
 	#define CF_INLINE static inline
     #elif defined(_MSC_VER)
         #define CF_INLINE static __inline
