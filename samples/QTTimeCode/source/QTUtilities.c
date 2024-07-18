@@ -409,7 +409,7 @@ short QTUtils_GetControllerBarHeight(MovieController theMC)
 	if (wasAttached)
 		MCSetControllerAttached(theMC, true);
 
-	return (myRect.bottom - myRect.top);
+	return (short)(myRect.bottom - myRect.top);
 }
 
 //////////
@@ -469,8 +469,9 @@ void QTUtils_PutControllerBarOnTop(MovieController theMC)
 
 		MCGetControllerBoundsRect(theMC, &myMCRect);
 		myMovieRect = myMCRect;
-		myMCRect.bottom = myMCRect.top + QTUtils_GetControllerBarHeight(theMC);
-		myMovieRect.top = myMCRect.bottom + 1;
+		myMCRect.bottom =
+			(short)(myMCRect.top + QTUtils_GetControllerBarHeight(theMC));
+		myMovieRect.top = (short)(myMCRect.bottom + 1);
 
 		MCSetControllerAttached(theMC, false);
 
@@ -772,7 +773,7 @@ OSErr QTUtils_UpdateMovieVolumeSetting(Movie theMovie)
 
 	myPrefVolume = GetMoviePreferredVolume(theMovie);
 	myCurrVolume = GetMovieVolume(theMovie);
-	myCurrVolume = abs(myCurrVolume);
+	myCurrVolume = (short)abs(myCurrVolume);
 
 	if (myPrefVolume != myCurrVolume) {
 		SetMoviePreferredVolume(theMovie, myCurrVolume);
@@ -811,7 +812,7 @@ OSErr QTUtils_SelectAllMovie(MovieController theMC)
 		return ((OSErr)myErr);
 
 	myTimeRecord.value.hi = 0;
-	myTimeRecord.value.lo = GetMovieDuration(myMovie);
+	myTimeRecord.value.lo = (UInt32)GetMovieDuration(myMovie);
 	myTimeRecord.base = 0;
 	myTimeRecord.scale = GetMovieTimeScale(myMovie);
 	myErr = MCDoAction(theMC, mcActionSetSelectionDuration, &myTimeRecord);
@@ -868,7 +869,7 @@ ImageDescriptionHandle QTUtils_MakeSampleDescription(
 
 	// fill in the fields of the sample description
 	(**mySampleDesc).idSize = sizeof(ImageDescription);
-	(**mySampleDesc).cType = theEffectType;
+	(**mySampleDesc).cType = (CodecType)theEffectType;
 	(**mySampleDesc).vendor = kAppleManufacturer;
 	(**mySampleDesc).temporalQuality = codecNormalQuality;
 	(**mySampleDesc).spatialQuality = codecNormalQuality;
@@ -990,7 +991,7 @@ OSErr QTUtils_AddUserDataTextToMovie(
 {
 	UserData myUserData = NULL;
 	Handle myHandle = NULL;
-	long myLength = strlen(theText);
+	long myLength = (long)strlen(theText);
 	OSErr myErr = noErr;
 
 	// get the movie's user data list
@@ -1031,8 +1032,8 @@ OSErr QTUtils_AddUserDataTextToMovie(
 
 OSErr QTUtils_AddCopyrightToMovie(Movie theMovie, char* theText)
 {
-	return (QTUtils_AddUserDataTextToMovie(
-		theMovie, theText, kUserDataTextCopyright));
+	return QTUtils_AddUserDataTextToMovie(
+		theMovie, theText, (OSType)kUserDataTextCopyright);
 }
 
 //////////
@@ -1044,8 +1045,8 @@ OSErr QTUtils_AddCopyrightToMovie(Movie theMovie, char* theText)
 
 OSErr QTUtils_AddMovieNameToMovie(Movie theMovie, char* theText)
 {
-	return (QTUtils_AddUserDataTextToMovie(
-		theMovie, theText, kUserDataTextFullName));
+	return QTUtils_AddUserDataTextToMovie(
+		theMovie, theText, (OSType)kUserDataTextFullName);
 }
 
 //////////
@@ -1057,8 +1058,8 @@ OSErr QTUtils_AddMovieNameToMovie(Movie theMovie, char* theText)
 
 OSErr QTUtils_AddMovieInfoToMovie(Movie theMovie, char* theText)
 {
-	return (QTUtils_AddUserDataTextToMovie(
-		theMovie, theText, kUserDataTextInformation));
+	return QTUtils_AddUserDataTextToMovie(
+		theMovie, theText, (OSType)kUserDataTextInformation);
 }
 
 //////////
@@ -1133,7 +1134,7 @@ OSErr QTUtils_SetMovieFileLoopingInfo(Movie theMovie, long theLoopInfo)
 		RemoveUserData(myUserData, FOUR_CHAR_CODE('LOOP'), 1);
 
 	// make sure we're writing big-endian data
-	myLoopInfo = EndianU32_NtoB(theLoopInfo);
+	myLoopInfo = (long)EndianU32_NtoB(theLoopInfo);
 
 	switch (theLoopInfo) {
 	case kNormalLooping:
@@ -1303,9 +1304,9 @@ char* QTUtils_GetTrackName(Track theTrack)
 			long myLength = GetHandleSize(myHandle);
 
 			if (myLength > 0) {
-				myString = malloc(myLength + 1);
+				myString = malloc((size_t)(myLength + 1));
 				if (myString != NULL) {
-					memcpy(myString, *myHandle, myLength);
+					memcpy(myString, *myHandle, (size_t)myLength);
 					myString[myLength] = '\0';
 				}
 			}
@@ -1346,8 +1347,8 @@ OSErr QTUtils_SetTrackName(Track theTrack, char* theText)
 	while (RemoveUserData(myUserData, kUserDataName, 1) == noErr)
 		;
 
-	myErr =
-		SetUserDataItem(myUserData, theText, strlen(theText), kUserDataName, 0);
+	myErr = SetUserDataItem(
+		myUserData, theText, (long)strlen(theText), kUserDataName, 0);
 
 	return (myErr);
 }
@@ -1417,7 +1418,7 @@ char* QTUtils_MakeTrackNameByType(Track theTrack)
 
 			// now copy the string data from the Pascal string to a C string
 			if (myName[0] > 0) {
-				myString = malloc(myName[0] + 1);
+				myString = malloc((size_t)(myName[0] + 1));
 				if (myString != NULL) {
 					memcpy(myString, &myName[1], myName[0]);
 					myString[myName[0]] = '\0';
@@ -1516,7 +1517,7 @@ StringPtr QTUtils_ConvertCToPascalString(char* theString)
 	short myIndex = 0;
 
 	while ((theString[myIndex] != '\0') && (myIndex < 255)) {
-		myString[myIndex + 1] = theString[myIndex];
+		myString[myIndex + 1] = (unsigned char)theString[myIndex];
 		myIndex++;
 	}
 
@@ -1537,11 +1538,11 @@ StringPtr QTUtils_ConvertCToPascalString(char* theString)
 
 char* QTUtils_ConvertPascalToCString(StringPtr theString)
 {
-	char* myString = malloc(theString[0] + 1);
+	char* myString = malloc((size_t)(theString[0] + 1));
 	short myIndex = 0;
 
 	for (myIndex = 0; myIndex < theString[0]; myIndex++)
-		myString[myIndex] = theString[myIndex + 1];
+		myString[myIndex] = (char)theString[myIndex + 1];
 
 	myString[theString[0]] = '\0';
 

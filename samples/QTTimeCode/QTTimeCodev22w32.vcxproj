@@ -67,6 +67,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
     </Link>
+    <PostBuildEvent>
+      <Message>Building source\QTTimeCode.r</Message>
+      <Command>..\..\Tools\rez -o "$(TargetPath)" source\QTTimeCode.r</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="source\ComApplication.h" />

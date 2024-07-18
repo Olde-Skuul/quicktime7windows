@@ -29,6 +29,11 @@
 #include "ComApplication.h"
 #include "QTTimeCode.h"
 
+#if defined(_MSC_VER)
+// Disable unreferenced formal parameters
+#pragma warning(disable : 4100)
+#endif
+
 //////////
 //
 // global variables

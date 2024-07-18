@@ -121,6 +121,11 @@
 
 #include "ComFramework.h"
 
+#if defined(_MSC_VER)
+// Disable unreferenced formal parameters
+#pragma warning(disable : 4100)
+#endif
+
 //////////
 //
 // global variables
@@ -342,11 +347,11 @@ int QTFrame_AdjustMenus(
 		MCGetControllerInfo(myMC, &myFlags);
 
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITSELECTALL,
-			myFlags & mcInfoEditingEnabled ? kEnableMenuItem :
-											 kDisableMenuItem);
+			(short)(myFlags & mcInfoEditingEnabled ? kEnableMenuItem :
+													 kDisableMenuItem));
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITSELECTNONE,
-			myFlags & mcInfoEditingEnabled ? kEnableMenuItem :
-											 kDisableMenuItem);
+			(short)(myFlags & mcInfoEditingEnabled ? kEnableMenuItem :
+													 kDisableMenuItem));
 
 #if TARGET_OS_MAC
 		// on Macintosh, we can use the MCSetUpEditMenu function to handle the 5
@@ -359,17 +364,20 @@ int QTFrame_AdjustMenus(
 		// on Windows, replicate the menu-updating functionality of
 		// MCSetUpEditMenu, as much as possible
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITUNDO,
-			myFlags & mcInfoUndoAvailable ? kEnableMenuItem : kDisableMenuItem);
+			(short)(myFlags & mcInfoUndoAvailable ? kEnableMenuItem :
+													kDisableMenuItem));
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITCUT,
-			myFlags & mcInfoCutAvailable ? kEnableMenuItem : kDisableMenuItem);
+			(short)(myFlags & mcInfoCutAvailable ? kEnableMenuItem :
+												   kDisableMenuItem));
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITCOPY,
-			myFlags & mcInfoCopyAvailable ? kEnableMenuItem : kDisableMenuItem);
+			(short)(myFlags & mcInfoCopyAvailable ? kEnableMenuItem :
+													kDisableMenuItem));
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITPASTE,
-			myFlags & mcInfoPasteAvailable ? kEnableMenuItem :
-											 kDisableMenuItem);
+			(short)(myFlags & mcInfoPasteAvailable ? kEnableMenuItem :
+													 kDisableMenuItem));
 		QTFrame_SetMenuItemState(myMenu, IDM_EDITCLEAR,
-			myFlags & mcInfoClearAvailable ? kEnableMenuItem :
-											 kDisableMenuItem);
+			(short)(myFlags & mcInfoClearAvailable ? kEnableMenuItem :
+													 kDisableMenuItem));
 
 		QTFrame_ConvertMacToWinMenuItemLabel(
 			myMC, myMenu, theModifiers, IDM_EDITUNDO);
@@ -401,8 +409,8 @@ int QTFrame_AdjustMenus(
 		if (myWindowObject != NULL) {
 			QTFrame_SetMenuItemState(myMenu, IDM_FILESAVEAS, kEnableMenuItem);
 			QTFrame_SetMenuItemState(myMenu, IDM_FILESAVE,
-				(**myWindowObject).fIsDirty ? kEnableMenuItem :
-											  kDisableMenuItem);
+				(short)((**myWindowObject).fIsDirty ? kEnableMenuItem :
+													  kDisableMenuItem));
 		} else {
 			QTFrame_SetMenuItemState(myMenu, IDM_FILESAVEAS, kDisableMenuItem);
 			QTFrame_SetMenuItemState(myMenu, IDM_FILESAVE, kDisableMenuItem);
@@ -488,7 +496,11 @@ Boolean QTFrame_OpenMovieInWindow(Movie theMovie, FSSpec* theFSSpec)
 	OSType myTypeList[] = {kQTFileTypeMovie, kQTFileTypeQuickTimeImage};
 	short myNumTypes = 2;
 	GrafPtr mySavedPort;
+
+#if TARGET_OS_MAC
 	Rect myRect = {0, 0, 0, 0};
+#endif
+
 	Point myPoint;
 	QTFrameFileFilterUPP myFileFilterUPP = NULL;
 	OSErr myErr = noErr;
@@ -508,7 +520,7 @@ Boolean QTFrame_OpenMovieInWindow(Movie theMovie, FSSpec* theFSSpec)
 			QTFrame_GetFileFilterUPP((ProcPtr)QTFrame_FilterFiles);
 
 		myErr = QTFrame_GetOneFileWithPreview(myNumTypes,
-			(QTFrameTypeListPtr)myTypeList, &myFSSpec, myFileFilterUPP);
+			(QTFrameTypeListPtr)myTypeList, &myFSSpec, (void*)myFileFilterUPP);
 
 		if (myFileFilterUPP != NULL)
 			DisposeNavObjectFilterUPP(myFileFilterUPP);
@@ -698,7 +710,7 @@ MovieController QTFrame_SetupController(
 
 	// resize the movie bounding rect and offset to 0,0
 	GetMovieBox(theMovie, &myRect);
-	MacOffsetRect(&myRect, -myRect.left, -myRect.top);
+	MacOffsetRect(&myRect, (short)(-myRect.left), (short)(-myRect.top));
 	SetMovieBox(theMovie, &myRect);
 	AlignWindow(
 		QTFrame_GetWindowFromWindowReference(theWindow), false, &myRect, NULL);
@@ -726,11 +738,11 @@ MovieController QTFrame_SetupController(
 	// add grow box for the movie controller
 	if ((**myWindowObject).fCanResizeWindow) {
 #if TARGET_OS_WIN32
-		RECT myRect;
+		RECT myRect2;
 
-		GetWindowRect(GetDesktopWindow(), &myRect);
-		OffsetRect(&myRect, -myRect.left, -myRect.top);
-		QTFrame_ConvertWinToMacRect(&myRect, &gMCResizeBounds);
+		GetWindowRect(GetDesktopWindow(), &myRect2);
+		OffsetRect(&myRect2, -myRect2.left, -myRect2.top);
+		QTFrame_ConvertWinToMacRect(&myRect2, &gMCResizeBounds);
 #endif
 #if TARGET_OS_MAC
 		GetRegionBounds(GetGrayRgn(), &gMCResizeBounds);
@@ -1481,7 +1493,8 @@ void QTFrame_SetMenuState(
 		theMenu, 0, theState); // menu item == 0 means the entire menu
 #endif
 #if TARGET_OS_WIN32
-	QTFrame_SetMenuItemState(theMenu, theMenuItem, theState | MF_BYPOSITION);
+	QTFrame_SetMenuItemState(
+		theMenu, theMenuItem, (short)(theState | MF_BYPOSITION));
 #endif
 }
 
@@ -1569,8 +1582,8 @@ void QTFrame_SetMenuItemCheck(
 	MacCheckMenuItem(theMenu, MENU_ITEM(theMenuItem), theState);
 #endif
 #if TARGET_OS_WIN32
-	CheckMenuItem(
-		theMenu, (UINT)theMenuItem, theState ? MF_CHECKED : MF_UNCHECKED);
+	CheckMenuItem(theMenu, (UINT)theMenuItem,
+		(UINT)(theState ? MF_CHECKED : MF_UNCHECKED));
 #endif
 }
 
@@ -1749,7 +1762,8 @@ void QTFrame_SizeWindowToMovie(WindowObject theWindowObject)
 
 	SizeWindow(
 		QTFrame_GetWindowFromWindowReference((**theWindowObject).fWindow),
-		myRect.right - myRect.left, myRect.bottom - myRect.top, true);
+		(short)(myRect.right - myRect.left),
+		(short)(myRect.bottom - myRect.top), true);
 
 bail:
 #if TARGET_OS_WIN32
@@ -1994,15 +2008,15 @@ Handle QTFrame_CreateOpenHandle(OSType theApplicationSignature,
 		return (myHandle);
 
 	if (theNumTypes > 0) {
-		myHandle =
-			NewHandle(sizeof(NavTypeList) + (theNumTypes * sizeof(OSType)));
+		myHandle = NewHandle(
+			(Size)(sizeof(NavTypeList) + (theNumTypes * sizeof(OSType))));
 		if (myHandle != NULL) {
 			NavTypeListHandle myOpenResHandle = (NavTypeListHandle)myHandle;
 
 			(*myOpenResHandle)->componentSignature = theApplicationSignature;
 			(*myOpenResHandle)->osTypeCount = theNumTypes;
 			BlockMoveData(theTypeList, (*myOpenResHandle)->osType,
-				theNumTypes * sizeof(OSType));
+				(Size)(theNumTypes * sizeof(OSType)));
 		}
 	}
 
@@ -2119,7 +2133,7 @@ OSErr QTFrame_BuildFileTypeList(void)
 	QTFrame_AddComponentFileTypes(GraphicsImporterComponentType, &myIndex);
 
 	// resize the pointer to hold the exact number of valid file types
-	SetHandleSize(gValidFileTypes, myIndex * sizeof(OSType));
+	SetHandleSize(gValidFileTypes, (Size)(myIndex * sizeof(OSType)));
 
 	return (MemError());
 }
@@ -2159,8 +2173,8 @@ static void QTFrame_AddComponentFileTypes(
 		if (*theNextIndex ==
 			GetHandleSize(gValidFileTypes) / (long)sizeof(OSType)) {
 			SetHandleSize(gValidFileTypes,
-				GetHandleSize(gValidFileTypes) +
-					(kDefaultFileTypeCount * sizeof(OSType)));
+				(Size)(GetHandleSize(gValidFileTypes) +
+					(kDefaultFileTypeCount * sizeof(OSType))));
 			if (MemError() != noErr)
 				return;
 		}
@@ -2217,7 +2231,8 @@ void QTFrame_ConvertMacToWinMenuItemLabel(MovieController theMC,
 	short myLabelSize = 0;
 
 	// get the appropriate label for the specified item and keyboard modifiers
-	MCGetMenuString(theMC, theModifiers, MENU_ITEM(theMenuItem), myString);
+	MCGetMenuString(
+		theMC, theModifiers, (short)MENU_ITEM(theMenuItem), myString);
 
 	switch (theMenuItem) {
 	case IDM_EDITUNDO:
@@ -2246,15 +2261,16 @@ void QTFrame_ConvertMacToWinMenuItemLabel(MovieController theMC,
 		return;
 	}
 
-	myLabelSize = strlen(myBeginText) + myString[0] + strlen(myFinalText) + 1;
+	myLabelSize =
+		(short)(strlen(myBeginText) + myString[0] + strlen(myFinalText) + 1);
 	myLabelText = malloc(myLabelSize);
 	if (myLabelText == NULL)
 		return;
 
-	BlockMove(myBeginText, myLabelText, strlen(myBeginText));
+	BlockMove(myBeginText, myLabelText, (Size)strlen(myBeginText));
 	BlockMove(&myString[1], myLabelText + strlen(myBeginText), myString[0]);
 	BlockMove(myFinalText, myLabelText + strlen(myBeginText) + myString[0],
-		strlen(myFinalText));
+		(Size)strlen(myFinalText));
 	myLabelText[myLabelSize - 1] = '\0';
 
 	QTFrame_SetMenuItemLabel(theWinMenu, theMenuItem, myLabelText);

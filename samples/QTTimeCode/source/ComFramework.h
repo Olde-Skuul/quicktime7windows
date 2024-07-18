@@ -33,6 +33,14 @@
 #include "WinPrefix.h"
 #endif
 
+#if TARGET_OS_WIN32
+#define GetProcessInformation Win32GetProcessInformation
+#include <windows.h>
+#undef GetProcessInformation
+#include <shellapi.h> // for SHAddToRecentDocs
+#include <shlobj.h>
+#endif
+
 #ifndef __CONTROLDEFINITIONS__
 #include <ControlDefinitions.h>
 #endif
@@ -83,10 +91,6 @@
 #ifndef __QTML__
 #include <QTML.h>
 #endif
-
-#define GetProcessInformation Win32GetProcessInformation
-#include <shlobj.h> // for SHAddToRecentDocs
-#undef GetProcessInformation
 #endif
 
 // revert to older names, to keep the linker happy

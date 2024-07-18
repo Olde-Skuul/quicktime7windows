@@ -30,6 +30,7 @@
 #define GetProcessInformation Win32GetProcessInformation
 #include <windows.h>
 #undef GetProcessInformation
+#include <shellapi.h>
 #endif
 
 #ifndef __FIXMATH__
@@ -54,8 +55,6 @@
 
 #include "ComFramework.h"
 #include "ComResource.h"
-
-#include <shellapi.h>
 
 //////////
 //

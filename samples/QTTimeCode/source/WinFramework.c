@@ -63,6 +63,11 @@
 
 #include <commdlg.h>
 
+#if defined(_MSC_VER)
+// Disable unreferenced formal parameters
+#pragma warning(disable : 4100)
+#endif
+
 //////////
 //
 // global variables
@@ -238,7 +243,7 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	ExitMovies();
 	TerminateQTML();
 
-	return (myMsg.wParam); // returns the value from PostQuitMessage
+	return (int)myMsg.wParam; // returns the value from PostQuitMessage
 }
 
 //////////
@@ -411,13 +416,13 @@ LRESULT CALLBACK QTFrame_MovieWndProc(
 
 	// give the movie controller this message first
 	if ((!gShuttingDown) && (theMessage != WM_COMMAND)) {
-		LONG myPoints = GetMessagePos();
+		LONG myPoints = (LONG)GetMessagePos();
 
 		myMsg.hwnd = theWnd;
 		myMsg.message = theMessage;
 		myMsg.wParam = wParam;
 		myMsg.lParam = lParam;
-		myMsg.time = GetMessageTime();
+		myMsg.time = (DWORD)GetMessageTime();
 		myMsg.pt.x = LOWORD(myPoints);
 		myMsg.pt.y = HIWORD(myPoints);
 
@@ -433,8 +438,8 @@ LRESULT CALLBACK QTFrame_MovieWndProc(
 		if (!myIsHandled)
 			if (myMC != NULL)
 				if (!IsIconic(theWnd))
-					myIsHandled =
-						MCIsPlayerEvent(myMC, (EventRecord*)&myMacEvent);
+					myIsHandled = (Boolean)MCIsPlayerEvent(
+						myMC, (EventRecord*)&myMacEvent);
 	}
 
 	switch (theMessage) {
@@ -480,8 +485,8 @@ LRESULT CALLBACK QTFrame_MovieWndProc(
 
 			myRect.top = 0;
 			myRect.left = 0;
-			myRect.right = myWidth;
-			myRect.bottom = myHeight;
+			myRect.right = (short)myWidth;
+			myRect.bottom = (short)myHeight;
 
 			MCSetControllerBoundsRect(myMC, &myRect);
 		}
@@ -581,7 +586,8 @@ LRESULT CALLBACK QTFrame_MovieWndProc(
 				GetWindowText(theWnd, myText, sizeof(myText));
 
 				// specify the action
-				myAction = gShuttingDown ? IDS_SAVEONQUIT : IDS_SAVEONCLOSE;
+				myAction =
+					(UINT)(gShuttingDown ? IDS_SAVEONQUIT : IDS_SAVEONCLOSE);
 
 				// display the "Save changes" dialog box
 				myItem = QTFrame_ShowCautionAlert(theWnd, myAction,
@@ -825,12 +831,12 @@ void QTFrame_GetDisplayName(char* thePathName, char* theDispName)
 		// find the position of the rightmost path separator in thePathName
 		if (strchr(thePathName, kWinFilePathSeparator) != NULL) {
 
-			myIndex = myLength - 1;
+			myIndex = (short)(myLength - 1);
 			while (thePathName[myIndex] != kWinFilePathSeparator)
 				myIndex--;
 
 			// calculate the length of the basename
-			myLength = myLength - myIndex - 1;
+			myLength = (short)(myLength - myIndex - 1);
 
 		} else {
 			// there is no rightmost path separator in thePathName;
@@ -971,7 +977,7 @@ static UINT APIENTRY QTFrame_DialogProcedure(
 		break;
 	}
 
-	return (isHandled);
+	return (UINT)isHandled;
 }
 
 //////////
@@ -989,6 +995,11 @@ static void QTFrame_CalcWindowMinMaxInfo(HWND theWnd, LPMINMAXINFO lpMinMax)
 	GraphicsImportComponent myImporter = NULL;
 	Rect myRect;
 	ComponentResult myErr = noErr;
+
+	myRect.top = 0;
+	myRect.left = 0;
+	myRect.bottom = 0;
+	myRect.right = 0;
 
 	myWindowObject = QTFrame_GetWindowObjectFromWindow(theWnd);
 	if (myWindowObject != NULL) {

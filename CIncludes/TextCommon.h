@@ -867,7 +867,7 @@ UCGetCharProperty(
 #if !defined(UC_INLINE)
    #if defined(__GNUC__)
       #define UC_INLINE static __inline__
-    #elif defined(__MWERKS__) || defined(__cplusplus)
+    #elif defined(__MWERKS__) || defined(__cplusplus) || defined(__WATCOMC__)
       #define UC_INLINE static inline
     #else
       #define UC_INLINE static

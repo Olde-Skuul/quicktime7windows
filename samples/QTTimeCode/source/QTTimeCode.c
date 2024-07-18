@@ -121,7 +121,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 	TimeCodeDef myTCDef;
 	TimeCodeRecord myTCRec;
 	Str63 myString;
-	TimeValue myDuration;
+	TimeValue myDuration = 0;
 	MatrixRecord myMatrix;
 	Fixed myWidth;
 	Fixed myHeight;
@@ -130,7 +130,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 	TCTextOptions myTextOptions;
 	FontInfo myFontInfo;
 	TimeCodeDescriptionHandle myDesc = NULL;
-	long** myFrameHandle;
+	long** myFrameHandle = NULL;
 	OSErr myErr = noErr;
 
 	//////////
@@ -194,7 +194,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 	myTCDef.flags = myFlags;
 	myTCDef.fTimeScale = gTimeScale;
 	myTCDef.frameDuration = gFrameDur;
-	myTCDef.numFrames = gNumFrames;
+	myTCDef.numFrames = (UInt8)gNumFrames;
 
 	//////////
 	//
@@ -232,7 +232,8 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 	GetFontInfo(&myFontInfo);
 
 	// calculate track width and height based on text
-	myTCHeight = FixRatio(myFontInfo.ascent + myFontInfo.descent + 2, 1);
+	myTCHeight =
+		FixRatio((short)(myFontInfo.ascent + myFontInfo.descent + 2), 1);
 	SetTrackDimensions(myTrack, myWidth, myTCHeight);
 
 	GetTrackMatrix(myTrack, &myMatrix);
@@ -240,7 +241,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 		TranslateMatrix(&myMatrix, 0, myHeight);
 
 	SetTrackMatrix(myTrack, &myMatrix);
-	SetTrackEnabled(myTrack, gDisplayTimeCode ? true : false);
+	SetTrackEnabled(myTrack, (Boolean)(gDisplayTimeCode ? true : false));
 
 	TCSetTimeCodeFlags(
 		myHandler, gDisplayTimeCode ? tcdfShowTimeCode : 0, tcdfShowTimeCode);
@@ -314,7 +315,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 		if (myFrameHandle == NULL)
 			goto bail;
 
-		myErr = TCTimeCodeToFrameNumber(
+		myErr = (OSErr)TCTimeCodeToFrameNumber(
 			myHandler, &(**myDesc).timeCodeDef, &myTCRec, *myFrameHandle);
 
 		// the data in the timecode track must be big-endian
@@ -325,7 +326,7 @@ OSErr QTTC_AddTimeCodeToMovie(Movie theMovie, OSType theType)
 		// we don't need to convert the duration
 
 		myErr = AddMediaSample(myMedia, (Handle)myFrameHandle, 0,
-			GetHandleSize((Handle)myFrameHandle), myDuration,
+			(unsigned long)GetHandleSize((Handle)myFrameHandle), myDuration,
 			(SampleDescriptionHandle)myDesc, 1, 0, 0);
 		if (myErr != noErr)
 			goto bail;
@@ -401,9 +402,9 @@ Boolean QTTC_GetTimeCodeOptions(void)
 		myDialog, kItemIsNeg, myKind, (Handle)gOptionsUserItemProcUPP, &myRect);
 
 	myControl = QTTC_GetDItemHandle(myDialog, kItemUseTC);
-	SetControlValue(myControl, gUseTimeCode ? 1 : 0);
+	SetControlValue(myControl, (short)(gUseTimeCode ? 1 : 0));
 	myControl = QTTC_GetDItemHandle(myDialog, kItemUseCounter);
-	SetControlValue(myControl, gUseTimeCode ? 0 : 1);
+	SetControlValue(myControl, (short)(gUseTimeCode ? 0 : 1));
 
 	QTTC_SetDialogTextNumber(myDialog, kItemTimeScale, gTimeScale);
 	QTTC_SetDialogTextNumber(myDialog, kItemFrameDur, gFrameDur);
@@ -443,8 +444,8 @@ Boolean QTTC_GetTimeCodeOptions(void)
 
 			// add in the available fonts
 			AppendResMenu(myMenu, FOUR_CHAR_CODE('FONT'));
-			SetControlMaximum(myControl, CountMenuItems(myMenu));
-			SetControlValue(myControl, gFontIndex);
+			SetControlMaximum(myControl, (SInt16)CountMenuItems(myMenu));
+			SetControlValue(myControl, (SInt16)gFontIndex);
 		}
 	}
 
@@ -519,15 +520,15 @@ noGood:
 		GetDialogItemText((Handle)myControl, gSrcName);
 
 		myControl = QTTC_GetDItemHandle(myDialog, kItemDisplayTimeCode);
-		gDisplayTimeCode = GetControlValue(myControl);
+		gDisplayTimeCode = (Boolean)GetControlValue(myControl);
 		myControl = QTTC_GetDItemHandle(myDialog, kItemBelowVideo);
-		gDisplayBelowVideo = GetControlValue(myControl);
+		gDisplayBelowVideo = (Boolean)GetControlValue(myControl);
 		myControl = QTTC_GetDItemHandle(myDialog, kItemDropFrame);
-		gDropFrameVal = GetControlValue(myControl);
+		gDropFrameVal = (Boolean)GetControlValue(myControl);
 		myControl = QTTC_GetDItemHandle(myDialog, kItem24Hour);
-		g24Hour = GetControlValue(myControl);
+		g24Hour = (Boolean)GetControlValue(myControl);
 		myControl = QTTC_GetDItemHandle(myDialog, kItemNegOK);
-		gNegOK = GetControlValue(myControl);
+		gNegOK = (Boolean)GetControlValue(myControl);
 		myControl = QTTC_GetDItemHandle(myDialog, kItemUseTC);
 		gUseTimeCode = (GetControlValue(myControl) != 0);
 
@@ -542,7 +543,7 @@ noGood:
 				(**((PopupPrivateDataHandle)(**myControl).contrlData)).mHandle;
 #endif
 			gFontIndex = GetControlValue(myControl);
-			GetMenuItemText(myMenu2, gFontIndex, gFontName);
+			GetMenuItemText(myMenu2, (short)gFontIndex, gFontName);
 		}
 
 		if (!QTTC_ValidateDialogLong(myDialog, kItemTimeScale, &gTimeScale))
@@ -590,7 +591,7 @@ bail:
 PASCAL_RTN void QTTC_OptionsUserItemProcedure(
 	DialogPtr theDialog, short theItem)
 {
-	Handle myItemHandle = NULL;
+	// Handle myItemHandle = NULL;
 	Rect myRect;
 	ControlHandle myControl = NULL;
 	StringPtr mySign = NULL;
@@ -598,10 +599,10 @@ PASCAL_RTN void QTTC_OptionsUserItemProcedure(
 	if (theItem != kItemIsNeg)
 		return;
 
-	MacSetPort(GetWindowFromPort(GetDialogPort(theDialog)));
+	SetPortDialogPort(theDialog);
 
 	myControl = QTTC_GetDItemRect(theDialog, kItemIsNeg, &myRect);
-	MoveTo(myRect.left + 2, myRect.top + 17);
+	MoveTo((short)(myRect.left + 2), (short)(myRect.top + 17));
 	MacFrameRect(&myRect);
 
 	MacInsetRect(&myRect, 1, 1);
@@ -675,7 +676,7 @@ Boolean QTTC_ValidateDialogLong(
 		if (myText[myIndex] >= '0' && myText[myIndex] <= '9') {
 			IsDigitFound = true;
 		} else if (IsDigitFound) {
-			myText[0] = myIndex - 1;
+			myText[0] = (unsigned char)(myIndex - 1);
 			break;
 		} else if (myText[myIndex] != ' ') {
 			SelectDialogItemText(theDialog, theItem, 0, 32767);
@@ -778,7 +779,7 @@ void QTTC_ShowTimeCodeSource(Movie theMovie)
 			if (GetHandleSize(myNameHandle) > 0) {
 				BlockMove(
 					*myNameHandle, &myString[1], GetHandleSize(myNameHandle));
-				myString[0] = GetHandleSize(myNameHandle);
+				myString[0] = (unsigned char)GetHandleSize(myNameHandle);
 			}
 
 			if (myNameHandle != NULL)
