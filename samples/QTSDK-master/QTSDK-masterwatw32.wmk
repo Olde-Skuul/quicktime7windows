@@ -236,7 +236,8 @@ RC=WRC -ad -r -q -d__WATCOM__=1 -i="$(INCLUDE_DIRS)"
 OBJS= $(A)/QTSDK.obj &
 	$(A)/arghandler.obj &
 	$(A)/disney24.obj &
-	$(A)/stringtools.obj
+	$(A)/stringtools.obj &
+	$(A)/vectortools.obj
 
 #
 # Resource files to work with for the project

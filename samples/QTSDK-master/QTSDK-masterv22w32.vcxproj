@@ -69,11 +69,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="source\general.h" />
+    <ClInclude Include="source\QTSDK.h" />
+    <ClInclude Include="source\arghandler.h" />
+    <ClInclude Include="source\disney24.h" />
+    <ClInclude Include="source\stringtools.h" />
+    <ClInclude Include="source\vectortools.h" />
     <ClCompile Include="source\QTSDK.cpp" />
     <ClCompile Include="source\arghandler.cpp" />
     <ClCompile Include="source\disney24.cpp" />
     <ClCompile Include="source\stringtools.cpp" />
+    <ClCompile Include="source\vectortools.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />

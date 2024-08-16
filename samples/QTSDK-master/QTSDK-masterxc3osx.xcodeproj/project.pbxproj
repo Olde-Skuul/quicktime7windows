@@ -11,6 +11,7 @@
 		2FEC9A81FF7F4A9184AA6125 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9AC54CC47F3C0DD9956B9AD3 /* OpenGL.framework */; };
 		3109E9DBA34CA723F8428DA1 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E6C38CB99080A8ACE07C99B7 /* SystemConfiguration.framework */; };
 		3169B0701D0BFA29F58B08DE /* disney24.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AFAC3E5A817AB73ABD1713F0 /* disney24.cpp */; };
+		351490AD411C02DACC19C77C /* vectortools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 10057D7F6668E97679E01CE5 /* vectortools.cpp */; };
 		76FCAA88482CCE2A0EFD74A5 /* QTSDK.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2F3FEF910B93566E6E02C8F /* QTSDK.cpp */; };
 		888B29CD2913D573D3589BB1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04BBF96056AA4E7B57C08772 /* Cocoa.framework */; };
 		A4FBDA35897CE9DE9A9BD2AA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE777FE96C2217EBF14EC80A /* QuickTime.framework */; };
@@ -27,20 +28,25 @@
 /* Begin PBXFileReference section */
 		04B2C1AE7D1BF4E63DDFDBDF /* stringtools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = stringtools.cpp; path = source/stringtools.cpp; sourceTree = SOURCE_ROOT; };
 		04BBF96056AA4E7B57C08772 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		10057D7F6668E97679E01CE5 /* vectortools.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = vectortools.cpp; path = source/vectortools.cpp; sourceTree = SOURCE_ROOT; };
+		140A570A3E7AA2A7D829168F /* vectortools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vectortools.h; path = source/vectortools.h; sourceTree = SOURCE_ROOT; };
 		176C3F0503654FF92FDC346E /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = System/Library/Frameworks/AudioUnit.framework; sourceTree = SDKROOT; };
 		39EDF37A025CE139D5738163 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		4E89DAF6AC956EC9579C293F /* QTSDK.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QTSDK.h; path = source/QTSDK.h; sourceTree = SOURCE_ROOT; };
 		60566A081602146F3C8BA8CA /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
 		6061B328817055E8B2E193D6 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 		67DB78113BD1F2042245B847 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
 		6FAD0CEFCD75E550208BD0AF /* QTSDK-master */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "QTSDK-master"; sourceTree = BUILT_PRODUCTS_DIR; };
 		957F7268BCFABFC0E258709B /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		979B0A3AB9548D9DA15329E8 /* disney24.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = disney24.h; path = source/disney24.h; sourceTree = SOURCE_ROOT; };
 		9AC54CC47F3C0DD9956B9AD3 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
 		A2F3FEF910B93566E6E02C8F /* QTSDK.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = QTSDK.cpp; path = source/QTSDK.cpp; sourceTree = SOURCE_ROOT; };
+		A4B0AC353D0A672590BD45A5 /* arghandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = arghandler.h; path = source/arghandler.h; sourceTree = SOURCE_ROOT; };
 		AF2B0ABDA0EE2DBA26016B9B /* arghandler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = arghandler.cpp; path = source/arghandler.cpp; sourceTree = SOURCE_ROOT; };
 		AFAC3E5A817AB73ABD1713F0 /* disney24.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = disney24.cpp; path = source/disney24.cpp; sourceTree = SOURCE_ROOT; };
+		BD705D30648E0973BE48BE6F /* stringtools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = stringtools.h; path = source/stringtools.h; sourceTree = SOURCE_ROOT; };
 		CB663B78C243F425CB5F622D /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
 		CE777FE96C2217EBF14EC80A /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = System/Library/Frameworks/QuickTime.framework; sourceTree = SDKROOT; };
-		DCB5A9EFC7394DE585E4323D /* general.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = general.h; path = source/general.h; sourceTree = SOURCE_ROOT; };
 		E6C38CB99080A8ACE07C99B7 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -70,10 +76,15 @@
 			isa = PBXGroup;
 			children = (
 				A2F3FEF910B93566E6E02C8F /* QTSDK.cpp */,
+				4E89DAF6AC956EC9579C293F /* QTSDK.h */,
 				AF2B0ABDA0EE2DBA26016B9B /* arghandler.cpp */,
+				A4B0AC353D0A672590BD45A5 /* arghandler.h */,
 				AFAC3E5A817AB73ABD1713F0 /* disney24.cpp */,
-				DCB5A9EFC7394DE585E4323D /* general.h */,
+				979B0A3AB9548D9DA15329E8 /* disney24.h */,
 				04B2C1AE7D1BF4E63DDFDBDF /* stringtools.cpp */,
+				BD705D30648E0973BE48BE6F /* stringtools.h */,
+				10057D7F6668E97679E01CE5 /* vectortools.cpp */,
+				140A570A3E7AA2A7D829168F /* vectortools.h */,
 			);
 			path = source;
 			sourceTree = SOURCE_ROOT;
@@ -186,6 +197,7 @@
 				FD8B8AED9F33454EA0CF427B /* arghandler.cpp in Sources */,
 				3169B0701D0BFA29F58B08DE /* disney24.cpp in Sources */,
 				B469D0D4B8C78C2B7AF37B24 /* stringtools.cpp in Sources */,
+				351490AD411C02DACC19C77C /* vectortools.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

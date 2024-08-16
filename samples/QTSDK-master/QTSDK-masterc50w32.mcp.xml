@@ -270,6 +270,13 @@
 				</FILE>
 				<FILE>
 					<PATHTYPE>Name</PATHTYPE>
+					<PATH>arghandler.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+					<FILEKIND>Text</FILEKIND>
+					<FILEFLAGS></FILEFLAGS>
+				</FILE>
+				<FILE>
+					<PATHTYPE>Name</PATHTYPE>
 					<PATH>disney24.cpp</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 					<FILEKIND>Text</FILEKIND>
@@ -277,7 +284,7 @@
 				</FILE>
 				<FILE>
 					<PATHTYPE>Name</PATHTYPE>
-					<PATH>general.h</PATH>
+					<PATH>disney24.h</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 					<FILEKIND>Text</FILEKIND>
 					<FILEFLAGS></FILEFLAGS>
@@ -291,7 +298,35 @@
 				</FILE>
 				<FILE>
 					<PATHTYPE>Name</PATHTYPE>
+					<PATH>QTSDK.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+					<FILEKIND>Text</FILEKIND>
+					<FILEFLAGS></FILEFLAGS>
+				</FILE>
+				<FILE>
+					<PATHTYPE>Name</PATHTYPE>
 					<PATH>stringtools.cpp</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+					<FILEKIND>Text</FILEKIND>
+					<FILEFLAGS></FILEFLAGS>
+				</FILE>
+				<FILE>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>stringtools.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+					<FILEKIND>Text</FILEKIND>
+					<FILEFLAGS></FILEFLAGS>
+				</FILE>
+				<FILE>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>vectortools.cpp</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+					<FILEKIND>Text</FILEKIND>
+					<FILEFLAGS></FILEFLAGS>
+				</FILE>
+				<FILE>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>vectortools.h</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 					<FILEKIND>Text</FILEKIND>
 					<FILEFLAGS></FILEFLAGS>
@@ -389,12 +424,17 @@
 				</FILEREF>
 				<FILEREF>
 					<PATHTYPE>Name</PATHTYPE>
+					<PATH>arghandler.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+				</FILEREF>
+				<FILEREF>
+					<PATHTYPE>Name</PATHTYPE>
 					<PATH>disney24.cpp</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 				</FILEREF>
 				<FILEREF>
 					<PATHTYPE>Name</PATHTYPE>
-					<PATH>general.h</PATH>
+					<PATH>disney24.h</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 				</FILEREF>
 				<FILEREF>
@@ -404,7 +444,27 @@
 				</FILEREF>
 				<FILEREF>
 					<PATHTYPE>Name</PATHTYPE>
+					<PATH>QTSDK.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+				</FILEREF>
+				<FILEREF>
+					<PATHTYPE>Name</PATHTYPE>
 					<PATH>stringtools.cpp</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+				</FILEREF>
+				<FILEREF>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>stringtools.h</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+				</FILEREF>
+				<FILEREF>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>vectortools.cpp</PATH>
+					<PATHFORMAT>Windows</PATHFORMAT>
+				</FILEREF>
+				<FILEREF>
+					<PATHTYPE>Name</PATHTYPE>
+					<PATH>vectortools.h</PATH>
 					<PATHFORMAT>Windows</PATHFORMAT>
 				</FILEREF>
 				<FILEREF>
@@ -561,13 +621,19 @@
 			<FILEREF>
 				<TARGETNAME>Release</TARGETNAME>
 				<PATHTYPE>Name</PATHTYPE>
+				<PATH>arghandler.h</PATH>
+				<PATHFORMAT>Windows</PATHFORMAT>
+			</FILEREF>
+			<FILEREF>
+				<TARGETNAME>Release</TARGETNAME>
+				<PATHTYPE>Name</PATHTYPE>
 				<PATH>disney24.cpp</PATH>
 				<PATHFORMAT>Windows</PATHFORMAT>
 			</FILEREF>
 			<FILEREF>
 				<TARGETNAME>Release</TARGETNAME>
 				<PATHTYPE>Name</PATHTYPE>
-				<PATH>general.h</PATH>
+				<PATH>disney24.h</PATH>
 				<PATHFORMAT>Windows</PATHFORMAT>
 			</FILEREF>
 			<FILEREF>
@@ -579,7 +645,31 @@
 			<FILEREF>
 				<TARGETNAME>Release</TARGETNAME>
 				<PATHTYPE>Name</PATHTYPE>
+				<PATH>QTSDK.h</PATH>
+				<PATHFORMAT>Windows</PATHFORMAT>
+			</FILEREF>
+			<FILEREF>
+				<TARGETNAME>Release</TARGETNAME>
+				<PATHTYPE>Name</PATHTYPE>
 				<PATH>stringtools.cpp</PATH>
+				<PATHFORMAT>Windows</PATHFORMAT>
+			</FILEREF>
+			<FILEREF>
+				<TARGETNAME>Release</TARGETNAME>
+				<PATHTYPE>Name</PATHTYPE>
+				<PATH>stringtools.h</PATH>
+				<PATHFORMAT>Windows</PATHFORMAT>
+			</FILEREF>
+			<FILEREF>
+				<TARGETNAME>Release</TARGETNAME>
+				<PATHTYPE>Name</PATHTYPE>
+				<PATH>vectortools.cpp</PATH>
+				<PATHFORMAT>Windows</PATHFORMAT>
+			</FILEREF>
+			<FILEREF>
+				<TARGETNAME>Release</TARGETNAME>
+				<PATHTYPE>Name</PATHTYPE>
+				<PATH>vectortools.h</PATH>
 				<PATHFORMAT>Windows</PATHFORMAT>
 			</FILEREF>
 		</GROUP>
