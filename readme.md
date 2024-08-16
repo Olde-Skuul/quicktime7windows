@@ -6,6 +6,8 @@ Send bug reports, comments, and insults to [Rebecca Ann Heineman becky@burgerbec
 
 ## Compatibility
 
+Quicktime for Windows only runs on 32 bit Intel versions of Windows. It does not exist for 64 bit Intel or ARM.
+
 This is based on the last known public release of the QuickTime for Windows SDK. Modifications were made to ensure compatiblity to modern SDKs and compilers.
 
 This has been tested with Visual Studio 2003-2022, Open Watcom 1.9, Codewarrior 9 for Windows, Clang, and GCC

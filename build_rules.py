@@ -26,6 +26,11 @@ from burger import environment_root
 # Can be overridden above
 PROCESS_PROJECT_FILES = False
 
+# Note: Make sure the Watcom shim is built before anything else
+
+# Process these folders before processing this folder
+# Can be overridden above
+DEPENDENCIES = ["WatcomLibraries"]
 
 ########################################
 
@@ -47,33 +52,39 @@ def library_settings(configuration):
         any other number is an error code.
     """
 
-    # Where is this SDK located?
+    # pylint: disable=too-many-branches
+
+    # Where is this file located?
     this_dir = os.path.dirname(os.path.abspath(__file__))
 
-    # Determine the root if it's an environment variable
+    # If located in BURGER_SDKS, use that, otherwise
+    # the relative pathname
     root_path, env_var = environment_root(
         this_dir, "BURGER_SDKS", configuration.working_directory)
 
-    # Folders for the libraries and includes
+    # Folders for the libraries and includes for Quicktime for Windows
     lib_dir = root_path + "\\Libraries"
     include_dir = root_path + "\\CIncludes"
+
+    # Special folder only for Watcom
     watcom_dir = root_path + "\\WatcomLibraries"
 
-    # Since it will need an environment variable, generate rules
-    # to test for its existence
+    # If an environment variable was used, ensure the IDE tests
+    # for it, just in case.
     if env_var and "BURGER_SDKS" not in configuration.env_variable_list:
         configuration.env_variable_list.append("BURGER_SDKS")
 
-    # Get the IDE
+    # Get the IDE and platform
     ide = configuration.project.solution.ide
-
-    # Get the platform
     platform = configuration.platform
 
-    # Only modify Windows Intel 32 bit projects
+    # Only modify Windows Intel 32 bit platform since Quicktime
+    # isn't supported on ARM or 64 bit platforms
     if platform is PlatformTypes.win32:
 
-        # Watcom has issues, deal with them
+        # Watcom uses a standard library that differs from the one
+        # the original library was compiled with. To build, use
+        # this shim that's built against the Watcom stdlib
         if ide is IDETypes.watcom:
             configuration.libraries_list.append("WatcomLibrarieswatw32rel.lib")
             configuration.library_folders_list.append(watcom_dir)
@@ -83,6 +94,7 @@ def library_settings(configuration):
         configuration.library_folders_list.append(lib_dir)
 
         # Include headers, however Codewarrior uses the library folder
+        # to support the used of #include <QTML.h> syntax
         if configuration.project.solution.ide.is_codewarrior():
             configuration.library_folders_list.append(include_dir)
         else:
@@ -92,7 +104,8 @@ def library_settings(configuration):
     # All other Windows platforms are not supported by Quicktime
     if platform.is_windows():
 
-        # These IDEs only support 32 bit Intel
+        # These IDEs only support 32 bit Intel so they ignore
+        # ARM and Intel 64
         if ide.is_codewarrior() or ide is IDETypes.watcom:
             return None
 

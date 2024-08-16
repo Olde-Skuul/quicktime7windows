@@ -119,6 +119,7 @@ def project_settings(project):
     """
 
     # Makeprojects defaults to perforce on
+    # Disable it for git generation
     project.solution.perforce = not is_git(project.working_directory)
 
     # Disable Visual Studio warnings
@@ -147,7 +148,9 @@ def configuration_settings(configuration):
 
     # Where is this file?
     this_dir = os.path.dirname(os.path.abspath(__file__))
+
+    # Find Quicktime for Windows
     this_dir = os.path.dirname(this_dir)
 
-    # Add the root folder to link in the library relative to this folder
+    # Add in Quicktime for Windows
     configuration.library_rules_list.append(this_dir)
