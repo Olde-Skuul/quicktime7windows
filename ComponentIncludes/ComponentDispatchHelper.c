@@ -1,7 +1,7 @@
 /*
 	File:		ComponentDispatchHelper.c
 
-	Copyright:	© 1995-2002 by Apple Computer, Inc., all rights reserved.
+	Copyright:	(c) 1995-2002 by Apple Computer, Inc., all rights reserved.
 
 */
 
@@ -97,6 +97,8 @@
 
 #if TARGET_OS_MAC
 	#define PASCAL_RTN	pascal
+#elif defined(__WATCOMC__)
+	#define PASCAL_RTN __declspec(__cdecl)
 #else
 	#define PASCAL_RTN
 #endif

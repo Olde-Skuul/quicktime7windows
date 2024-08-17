@@ -142,22 +142,25 @@ Boolean QTUtils_TrapAvailable(short theTrapWord)
 	short myNumToolboxTraps;
 
 	// determine whether this is a Toolbox or an Operating System trap
-	if ((theTrapWord & 0x0800) > 0)
+	if ((theTrapWord & 0x0800) > 0) {
 		myTrapType = ToolTrap;
-	else
+	} else {
 		myTrapType = OSTrap;
+	}
 
 	if (myTrapType == ToolTrap) {
 		theTrapWord = theTrapWord & 0x07FF;
 
 		if (NGetTrapAddress(_InitGraf, ToolTrap) ==
-			NGetTrapAddress(0xAA6E, ToolTrap))
+			NGetTrapAddress(0xAA6E, ToolTrap)) {
 			myNumToolboxTraps = 0x0200;
-		else
+		} else {
 			myNumToolboxTraps = 0x0400;
+		}
 
-		if (theTrapWord >= myNumToolboxTraps)
+		if (theTrapWord >= myNumToolboxTraps) {
 			theTrapWord = _Unimplemented;
+		}
 	}
 
 	return (NGetTrapAddress(theTrapWord, myTrapType) !=
@@ -175,10 +178,7 @@ Boolean QTUtils_TrapAvailable(short theTrapWord)
 Boolean QTUtils_IsQuickTimeInstalled(void)
 {
 	long myAttrs;
-	OSErr myErr = noErr;
-
-	myErr = Gestalt(gestaltQuickTime, &myAttrs);
-
+	OSErr myErr = Gestalt(gestaltQuickTime, &myAttrs);
 	return (myErr == noErr);
 }
 
@@ -198,9 +198,11 @@ Boolean QTUtils_IsQuickTimeCFMInstalled(void)
 
 	// test whether the PowerPC QuickTime glue library is present
 	myErr = Gestalt(gestaltQuickTimeFeatures, &myAttrs);
-	if (myErr == noErr)
-		if (myAttrs & (1L << gestaltPPCQuickTimeLibPresent))
+	if (myErr == noErr) {
+		if (myAttrs & (1L << gestaltPPCQuickTimeLibPresent)) {
 			myQTCFMAvail = true;
+		}
+	}
 
 	// test whether a function is available (the library is not moved from the
 	// Extension folder); this is the trick to be used when testing if a
@@ -219,22 +221,21 @@ Boolean QTUtils_IsQuickTimeCFMInstalled(void)
 // The high-order word of the returned long integer contains the version number,
 // so you can test a version like this:
 //
-//		if (((QTUtils_GetQTVersion() >> 16) & 0xffff) >= 0x0210)		// we
-// require QT 2.1 or greater 			return;
+// we require QT 2.1 or greater
+// if (((QTUtils_GetQTVersion() >> 16) & 0xffff) >= 0x0210)
+//		return;
 //
 //////////
 
 long QTUtils_GetQTVersion(void)
 {
 	long myVersion = 0L;
-	OSErr myErr = noErr;
+	OSErr myErr = Gestalt(gestaltQuickTime, &myVersion);
 
-	myErr = Gestalt(gestaltQuickTime, &myVersion);
-	if (myErr == noErr) {
-		return (myVersion);
-	} else {
-		return (0L);
+	if (myErr != noErr) {
+		myVersion = 0L;
 	}
+	return myVersion;
 }
 
 //////////
@@ -345,19 +346,21 @@ Boolean QTUtils_IsAutoPlayMovie(Movie theMovie)
 	OSErr myErr = paramErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		return (myAutoPlay);
+	if (theMovie == NULL) {
+		return myAutoPlay;
+	}
 
 	// get the movie's user data list
 	myUserData = GetMovieUserData(theMovie);
 	if (myUserData != NULL) {
 		myErr = GetUserDataItem(myUserData, &myAutoPlay, sizeof(myAutoPlay),
 			FOUR_CHAR_CODE('play'), 0);
-		if (myErr != noErr)
+		if (myErr != noErr) {
 			myAutoPlay = false;
+		}
 	}
 
-	return (myAutoPlay);
+	return myAutoPlay;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -378,7 +381,7 @@ Boolean QTUtils_IsAutoPlayMovie(Movie theMovie)
 
 Boolean QTUtils_IsControllerBarVisible(MovieController theMC)
 {
-	return ((Boolean)MCGetVisible(theMC));
+	return (Boolean)MCGetVisible(theMC);
 }
 
 //////////
@@ -406,9 +409,9 @@ short QTUtils_GetControllerBarHeight(MovieController theMC)
 	MCGetControllerBoundsRect(theMC, &myRect);
 
 	// now reattach the controller bar, if it was originally attached
-	if (wasAttached)
+	if (wasAttached) {
 		MCSetControllerAttached(theMC, true);
-
+	}
 	return (short)(myRect.bottom - myRect.top);
 }
 
@@ -445,10 +448,11 @@ void QTUtils_ShowControllerBar(MovieController theMC)
 
 void QTUtils_ToggleControllerBar(MovieController theMC)
 {
-	if (QTUtils_IsControllerBarVisible(theMC))
+	if (QTUtils_IsControllerBarVisible(theMC)) {
 		QTUtils_HideControllerBar(theMC);
-	else
+	} else {
 		QTUtils_ShowControllerBar(theMC);
+	}
 }
 
 //////////
@@ -460,8 +464,9 @@ void QTUtils_ToggleControllerBar(MovieController theMC)
 
 void QTUtils_PutControllerBarOnTop(MovieController theMC)
 {
-	if (theMC == NULL)
+	if (theMC == NULL) {
 		return;
+	}
 
 	if (MCIsControllerAttached(theMC) == 1) {
 		Rect myMCRect;
@@ -617,10 +622,11 @@ void QTUtils_ShowControllerButton(MovieController theMC, long theButton)
 
 void QTUtils_ToggleControllerButton(MovieController theMC, long theButton)
 {
-	if (QTUtils_IsControllerButtonVisible(theMC, theButton))
+	if (QTUtils_IsControllerButtonVisible(theMC, theButton)) {
 		QTUtils_HideControllerButton(theMC, theButton);
-	else
+	} else {
 		QTUtils_ShowControllerButton(theMC, theButton);
+	}
 }
 
 //////////
@@ -671,24 +677,27 @@ Boolean QTUtils_IsControllerButtonVisible(MovieController theMC, long theButton)
 		// the speaker button is not showing if the movie has no sound track and
 		// the explicit flag is not set
 		if (!QTUtils_MovieHasSoundTrack(MCGetMovie(theMC)) &&
-			!(myExplicitFlags & theButton))
-			return (false);
+			!(myExplicitFlags & theButton)) {
+			return false;
+		}
 	}
 
 	// the custom button requires some different treatment, since it doesn't
 	// have a "Suppress" button constant
 	if (theButton == mcFlagsUseCustomButton)
-		if (myControllerFlags & theButton)
-			return (true);
-		else
-			return (false);
+		if (myControllerFlags & theButton) {
+			return true;
+		} else {
+			return false;
+		}
 
 	// examine the suppress flag for the specified button
-	if (myControllerFlags &
-		theButton) // if the button is currently suppressed...
-		return (false);
-	else
-		return (true);
+	if (myControllerFlags & theButton) {
+		// if the button is currently suppressed...
+		return false;
+	} else {
+		return true;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -755,7 +764,7 @@ MediaHandler QTUtils_GetSoundMediaHandler(Movie theMovie)
 		return (GetMediaHandler(myMedia));
 	}
 
-	return (NULL);
+	return NULL;
 }
 
 //////////
@@ -780,7 +789,7 @@ OSErr QTUtils_UpdateMovieVolumeSetting(Movie theMovie)
 		myErr = GetMoviesError();
 	}
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -796,20 +805,23 @@ OSErr QTUtils_SelectAllMovie(MovieController theMC)
 	Movie myMovie = NULL;
 	ComponentResult myErr = noErr;
 
-	if (theMC == NULL)
-		return (paramErr);
+	if (theMC == NULL) {
+		return paramErr;
+	}
 
 	myMovie = MCGetMovie(theMC);
-	if (myMovie == NULL)
-		return (paramErr);
+	if (myMovie == NULL) {
+		return paramErr;
+	}
 
 	myTimeRecord.value.hi = 0;
 	myTimeRecord.value.lo = 0;
 	myTimeRecord.base = 0;
 	myTimeRecord.scale = GetMovieTimeScale(myMovie);
 	myErr = MCDoAction(theMC, mcActionSetSelectionBegin, &myTimeRecord);
-	if (myErr != noErr)
-		return ((OSErr)myErr);
+	if (myErr != noErr) {
+		return (OSErr)myErr;
+	}
 
 	myTimeRecord.value.hi = 0;
 	myTimeRecord.value.lo = (UInt32)GetMovieDuration(myMovie);
@@ -817,7 +829,7 @@ OSErr QTUtils_SelectAllMovie(MovieController theMC)
 	myTimeRecord.scale = GetMovieTimeScale(myMovie);
 	myErr = MCDoAction(theMC, mcActionSetSelectionDuration, &myTimeRecord);
 
-	return ((OSErr)myErr);
+	return (OSErr)myErr;
 }
 
 //////////
@@ -833,12 +845,14 @@ OSErr QTUtils_SelectNoneMovie(MovieController theMC)
 	Movie myMovie = NULL;
 	ComponentResult myErr = noErr;
 
-	if (theMC == NULL)
-		return (paramErr);
+	if (theMC == NULL) {
+		return paramErr;
+	}
 
 	myMovie = MCGetMovie(theMC);
-	if (myMovie == NULL)
-		return (paramErr);
+	if (myMovie == NULL) {
+		return paramErr;
+	}
 
 	myTimeRecord.value.hi = 0;
 	myTimeRecord.value.lo = 0;
@@ -846,7 +860,7 @@ OSErr QTUtils_SelectNoneMovie(MovieController theMC)
 	myTimeRecord.scale = GetMovieTimeScale(myMovie);
 	myErr = MCDoAction(theMC, mcActionSetSelectionDuration, &myTimeRecord);
 
-	return ((OSErr)myErr);
+	return (OSErr)myErr;
 }
 
 //////////
@@ -864,8 +878,9 @@ ImageDescriptionHandle QTUtils_MakeSampleDescription(
 	// create a new sample description
 	mySampleDesc =
 		(ImageDescriptionHandle)NewHandleClear(sizeof(ImageDescription));
-	if (mySampleDesc == NULL)
-		return (NULL);
+	if (mySampleDesc == NULL) {
+		return NULL;
+	}
 
 	// fill in the fields of the sample description
 	(**mySampleDesc).idSize = sizeof(ImageDescription);
@@ -882,7 +897,7 @@ ImageDescriptionHandle QTUtils_MakeSampleDescription(
 	(**mySampleDesc).depth = 24;
 	(**mySampleDesc).clutID = -1;
 
-	return (mySampleDesc);
+	return mySampleDesc;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -911,8 +926,9 @@ OSErr QTUtils_GetContentRatingFromMovie(
 	*theReasons = 0L;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		return (myErr);
+	if (theMovie == NULL) {
+		return myErr;
+	}
 
 	// get the movie's user data list
 	myUserData = GetMovieUserData(theMovie);
@@ -925,7 +941,7 @@ OSErr QTUtils_GetContentRatingFromMovie(
 		}
 	}
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -955,8 +971,9 @@ OSErr QTUtils_AddContentRatingToMovie(
 
 	// get the movie's user data list
 	myUserData = GetMovieUserData(theMovie);
-	if (myUserData == NULL)
-		return (paramErr);
+	if (myUserData == NULL) {
+		return paramErr;
+	}
 
 	myContentRec.flags = 0;
 	myContentRec.contentType = EndianU32_NtoB(theReasons);
@@ -970,7 +987,7 @@ OSErr QTUtils_AddContentRatingToMovie(
 	myErr = SetUserDataItem(myUserData, &myContentRec, sizeof(myContentRec),
 		FOUR_CHAR_CODE('crat'), 0);
 
-	return (myErr);
+	return myErr;
 }
 #endif // #if CONTENT_RATING_AVAIL
 
@@ -996,13 +1013,15 @@ OSErr QTUtils_AddUserDataTextToMovie(
 
 	// get the movie's user data list
 	myUserData = GetMovieUserData(theMovie);
-	if (myUserData == NULL)
-		return (paramErr);
+	if (myUserData == NULL) {
+		return paramErr;
+	}
 
 	// copy the specified text into a new handle
 	myHandle = NewHandleClear(myLength);
-	if (myHandle == NULL)
-		return (MemError());
+	if (myHandle == NULL) {
+		return MemError();
+	}
 
 	BlockMoveData(theText, *myHandle, myLength);
 
@@ -1020,7 +1039,7 @@ OSErr QTUtils_AddUserDataTextToMovie(
 
 	// clean up
 	DisposeHandle(myHandle);
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -1090,22 +1109,21 @@ OSErr QTUtils_GetMovieFileLoopingInfo(Movie theMovie, long* theLoopInfo)
 	OSErr myErr = paramErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		goto bail;
+	if (theMovie != NULL) {
 
-	// get the movie's user data list
-	myUserData = GetMovieUserData(theMovie);
-	if (myUserData != NULL) {
-		myErr = GetUserDataItem(myUserData, &myLoopInfo, sizeof(myLoopInfo),
-			FOUR_CHAR_CODE('LOOP'), 0);
-		if (myErr == noErr)
-			myLoopInfo = EndianS32_BtoN(myLoopInfo);
+		// get the movie's user data list
+		myUserData = GetMovieUserData(theMovie);
+		if (myUserData != NULL) {
+			myErr = GetUserDataItem(myUserData, &myLoopInfo, sizeof(myLoopInfo),
+				FOUR_CHAR_CODE('LOOP'), 0);
+			if (myErr == noErr) {
+				myLoopInfo = EndianS32_BtoN(myLoopInfo);
+			}
+		}
 	}
-
-bail:
 	*theLoopInfo = myLoopInfo;
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -1124,32 +1142,31 @@ OSErr QTUtils_SetMovieFileLoopingInfo(Movie theMovie, long theLoopInfo)
 
 	// get the movie's user data
 	myUserData = GetMovieUserData(theMovie);
-	if (myUserData == NULL)
-		goto bail;
+	if (myUserData != NULL) {
 
-	// we want to end up with at most one user data item of type 'LOOP',
-	// so let's remove any existing ones
-	myCount = CountUserDataType(myUserData, FOUR_CHAR_CODE('LOOP'));
-	while (myCount--)
-		RemoveUserData(myUserData, FOUR_CHAR_CODE('LOOP'), 1);
+		// we want to end up with at most one user data item of type 'LOOP',
+		// so let's remove any existing ones
+		myCount = CountUserDataType(myUserData, FOUR_CHAR_CODE('LOOP'));
+		while (myCount--) {
+			RemoveUserData(myUserData, FOUR_CHAR_CODE('LOOP'), 1);
+		}
 
-	// make sure we're writing big-endian data
-	myLoopInfo = (long)EndianU32_NtoB(theLoopInfo);
+		// make sure we're writing big-endian data
+		myLoopInfo = (long)EndianU32_NtoB(theLoopInfo);
 
-	switch (theLoopInfo) {
-	case kNormalLooping:
-	case kPalindromeLooping:
-		myErr = SetUserDataItem(
-			myUserData, &myLoopInfo, sizeof(long), FOUR_CHAR_CODE('LOOP'), 0);
-		break;
+		switch (theLoopInfo) {
+		case kNormalLooping:
+		case kPalindromeLooping:
+			myErr = SetUserDataItem(myUserData, &myLoopInfo, sizeof(long),
+				FOUR_CHAR_CODE('LOOP'), 0);
+			break;
 
-	case kNoLooping:
-	default:
-		myErr = noErr;
-		break;
+		case kNoLooping:
+		default:
+			myErr = noErr;
+			break;
+		}
 	}
-
-bail:
 	return (myErr);
 }
 
@@ -1186,7 +1203,7 @@ OSErr QTUtils_SetLoopingStateFromFile(Movie theMovie, MovieController theMC)
 		break;
 	}
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -1205,29 +1222,28 @@ OSErr QTUtils_MakeMovieLoop(Movie theMovie, Boolean isPalindrome)
 	OSErr myErr = paramErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		goto bail;
+	if (theMovie != NULL) {
 
-	myErr = noErr;
+		myErr = noErr;
 
-	// set the movie's play hints to enhance looping performance
-	SetMoviePlayHints(theMovie, hintsLoop, hintsLoop);
+		// set the movie's play hints to enhance looping performance
+		SetMoviePlayHints(theMovie, hintsLoop, hintsLoop);
 
-	// set the looping flag of the movie's time base
-	myTimeBase = GetMovieTimeBase(theMovie);
-	myFlags = GetTimeBaseFlags(myTimeBase);
-	myFlags |= loopTimeBase;
+		// set the looping flag of the movie's time base
+		myTimeBase = GetMovieTimeBase(theMovie);
+		myFlags = GetTimeBaseFlags(myTimeBase);
+		myFlags |= loopTimeBase;
 
-	// set or clear the palindrome flag, depending on the specified setting
-	if (isPalindrome)
-		myFlags |= palindromeLoopTimeBase;
-	else
-		myFlags &= ~palindromeLoopTimeBase;
+		// set or clear the palindrome flag, depending on the specified setting
+		if (isPalindrome) {
+			myFlags |= palindromeLoopTimeBase;
+		} else {
+			myFlags &= ~palindromeLoopTimeBase;
+		}
 
-	SetTimeBaseFlags(myTimeBase, myFlags);
-
-bail:
-	return (myErr);
+		SetTimeBaseFlags(myTimeBase, myFlags);
+	}
+	return myErr;
 }
 
 //////////
@@ -1235,8 +1251,8 @@ bail:
 // QTUtils_GetWindowPositionFromFile
 // Return, through thePoint, the stored position of the specified movie.
 //
-// Return an error if the movie has no stored position. In any case, return a
-// meaningful position.
+// Return an error if the movie has no stored position. In any case, return
+// a meaningful position.
 //
 //////////
 
@@ -1247,25 +1263,23 @@ OSErr QTUtils_GetWindowPositionFromFile(Movie theMovie, Point* thePoint)
 	OSErr myErr = paramErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		goto bail;
+	if (theMovie != NULL) {
 
-	// get the movie's user data list
-	myUserData = GetMovieUserData(theMovie);
-	if (myUserData != NULL) {
-		myErr = GetUserDataItem(
-			myUserData, &myPoint, sizeof(Point), FOUR_CHAR_CODE('WLOC'), 0);
-		if (myErr == noErr) {
-			myPoint.v = EndianS16_BtoN(myPoint.v);
-			myPoint.h = EndianS16_BtoN(myPoint.h);
+		// get the movie's user data list
+		myUserData = GetMovieUserData(theMovie);
+		if (myUserData != NULL) {
+			myErr = GetUserDataItem(
+				myUserData, &myPoint, sizeof(Point), FOUR_CHAR_CODE('WLOC'), 0);
+			if (myErr == noErr) {
+				myPoint.v = EndianS16_BtoN(myPoint.v);
+				myPoint.h = EndianS16_BtoN(myPoint.h);
+			}
 		}
 	}
-
-bail:
-	if (thePoint != NULL)
+	if (thePoint != NULL) {
 		*thePoint = myPoint;
-
-	return (myErr);
+	}
+	return myErr;
 }
 
 //////////
@@ -1288,8 +1302,9 @@ char* QTUtils_GetTrackName(Track theTrack)
 	OSErr myErr = noErr;
 
 	// make sure we've got a track
-	if (theTrack == NULL)
-		return (NULL);
+	if (theTrack == NULL) {
+		return NULL;
+	}
 
 	// a track's name (if it has one) is stored in the track's user data
 	myUserData = GetTrackUserData(theTrack);
@@ -1315,7 +1330,7 @@ char* QTUtils_GetTrackName(Track theTrack)
 		DisposeHandle(myHandle);
 	}
 
-	return (myString);
+	return myString;
 }
 
 //////////
@@ -1335,34 +1350,38 @@ OSErr QTUtils_SetTrackName(Track theTrack, char* theText)
 	OSErr myErr = noErr;
 
 	// make sure we've got a track and a name
-	if ((theTrack == NULL) || (theText == NULL))
-		return (paramErr);
+	if ((theTrack == NULL) || (theText == NULL)) {
+		return paramErr;
+	}
 
 	// get the track's user data list
 	myUserData = GetTrackUserData(theTrack);
-	if (myUserData == NULL)
-		return (paramErr);
+	if (myUserData == NULL) {
+		return paramErr;
+	}
 
 	// remove any existing track name
-	while (RemoveUserData(myUserData, kUserDataName, 1) == noErr)
-		;
+	while (RemoveUserData(myUserData, kUserDataName, 1) == noErr) {
+	}
 
 	myErr = SetUserDataItem(
 		myUserData, theText, (long)strlen(theText), kUserDataName, 0);
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
 //
 // QTUtils_MakeTrackNameByType
-// Create a (unique) name for the specified track, based on the track's type.
+// Create a (unique) name for the specified track, based on the track's
+// type.
 //
-// Given a movie track, this routine constructs a name for that track based on
-// the media type of that track. For instance, if the track is a sound track,
-// this routine returns the name "Sound". However, if there is more than one
-// track of that media type, then this routine numbers the track names. So, if
-// there are two sound tracks, this routine names them "Sound 1" and "Sound 2".
+// Given a movie track, this routine constructs a name for that track based
+// on the media type of that track. For instance, if the track is a sound
+// track, this routine returns the name "Sound". However, if there is more
+// than one track of that media type, then this routine numbers the track
+// names. So, if there are two sound tracks, this routine names them "Sound
+// 1" and "Sound 2".
 //
 // This routine is modelled on the one contained in Dispatch 2 from the Ice
 // Floe; I've modified it to return a C string instead of a Pascal string.
@@ -1379,8 +1398,9 @@ char* QTUtils_MakeTrackNameByType(Track theTrack)
 	ComponentResult myErr = noErr;
 
 	// make sure we've got a track
-	if (theTrack == NULL)
-		return (NULL);
+	if (theTrack == NULL) {
+		return NULL;
+	}
 
 	myMedia = GetTrackMedia(theTrack);
 	if (myMedia != NULL) {
@@ -1400,14 +1420,15 @@ char* QTUtils_MakeTrackNameByType(Track theTrack)
 			if (GetMovieIndTrackType(GetTrackMovie(theTrack), 2, myMediaType,
 					movieTrackMediaType) != NULL) {
 
-				// add an index number to the track type string we constructed
-				// above
+				// add an index number to the track type string we
+				// constructed above
 				long myIndex = 1;
 				Str255 myNumString;
 
 				while (GetMovieIndTrackType(GetTrackMovie(theTrack), myIndex,
-						   myMediaType, movieTrackMediaType) != theTrack)
+						   myMediaType, movieTrackMediaType) != theTrack) {
 					myIndex++;
+				}
 
 				NumToString(myIndex, myNumString);
 				myName[++myName[0]] = ' ';
@@ -1427,7 +1448,7 @@ char* QTUtils_MakeTrackNameByType(Track theTrack)
 		}
 	}
 
-	return (myString);
+	return myString;
 }
 
 //////////
@@ -1442,9 +1463,9 @@ Boolean QTUtils_IsImageFile(FSSpec* theFSSpec)
 	GraphicsImportComponent myImporter = NULL;
 
 	GetGraphicsImporterForFile(theFSSpec, &myImporter);
-	if (myImporter != NULL)
+	if (myImporter != NULL) {
 		CloseComponent(myImporter);
-
+	}
 	return (myImporter != NULL);
 }
 
@@ -1463,14 +1484,17 @@ Boolean QTUtils_IsMovieFile(FSSpec* theFSSpec)
 	FInfo myFinderInfo;
 	OSErr myErr = noErr;
 
-	// see whether the file type is MovieFileType; to do this, get the Finder
-	// information
+	// see whether the file type is MovieFileType; to do this, get the
+	// Finder information
 	myErr = FSpGetFInfo(theFSSpec, &myFinderInfo);
-	if (myErr == noErr)
-		if (myFinderInfo.fdType == kQTFileTypeMovie)
-			return (true);
+	if (myErr == noErr) {
+		if (myFinderInfo.fdType == kQTFileTypeMovie) {
+			return true;
+		}
+	}
 
-	// if it isn't a movie file, see whether the file can be imported as a movie
+	// if it isn't a movie file, see whether the file can be imported as a
+	// movie
 	myErr = QTNewAlias(theFSSpec, &myAlias, true);
 	if (myErr == noErr) {
 		if (myAlias != NULL) {
@@ -1480,10 +1504,12 @@ Boolean QTUtils_IsMovieFile(FSSpec* theFSSpec)
 		}
 	}
 
-	if ((myErr == noErr) && (myImporter != NULL)) // this file is a movie file
+	// this file is a movie file
+	if ((myErr == noErr) && (myImporter != NULL)) {
 		isMovieFile = true;
+	}
 
-	return (isMovieFile);
+	return isMovieFile;
 }
 
 //////////
@@ -1523,7 +1549,7 @@ StringPtr QTUtils_ConvertCToPascalString(char* theString)
 
 	myString[0] = (unsigned char)myIndex;
 
-	return (myString);
+	return myString;
 }
 
 //////////
@@ -1541,12 +1567,13 @@ char* QTUtils_ConvertPascalToCString(StringPtr theString)
 	char* myString = malloc((size_t)(theString[0] + 1));
 	short myIndex = 0;
 
-	for (myIndex = 0; myIndex < theString[0]; myIndex++)
+	for (myIndex = 0; myIndex < theString[0]; myIndex++) {
 		myString[myIndex] = (char)theString[myIndex + 1];
+	}
 
 	myString[theString[0]] = '\0';
 
-	return (myString);
+	return myString;
 }
 
 //////////
@@ -1567,8 +1594,9 @@ OSErr QTUtils_DeleteAllReferencesToTrack(Track theTrack)
 	OSErr myErr = noErr;
 
 	myMovie = GetTrackMovie(theTrack);
-	if (myMovie == NULL)
-		return (paramErr);
+	if (myMovie == NULL) {
+		return paramErr;
+	}
 
 	// iterate thru all the tracks in the movie (that are different from the
 	// specified track)
@@ -1578,14 +1606,15 @@ OSErr QTUtils_DeleteAllReferencesToTrack(Track theTrack)
 		if ((myTrack != NULL) && (myTrack != theTrack)) {
 			OSType myType = 0L;
 
-			// iterate thru all track reference types contained in the current
-			// track
+			// iterate thru all track reference types contained in the
+			// current track
 			myType = GetNextTrackReferenceType(myTrack, myType);
 			while (myType != 0L) {
 
 				// iterate thru all track references of the current type;
-				// note that we count down to 1, since DeleteTrackReference will
-				// cause any higher-indexed track references to be renumbered
+				// note that we count down to 1, since DeleteTrackReference
+				// will cause any higher-indexed track references to be
+				// renumbered
 				myTrRefCount = GetTrackReferenceCount(myTrack, myType);
 				for (myTrRefIndex = myTrRefCount; myTrRefIndex >= 1;
 					 myTrRefIndex--) {
@@ -1593,9 +1622,10 @@ OSErr QTUtils_DeleteAllReferencesToTrack(Track theTrack)
 
 					myRefTrack =
 						GetTrackReference(myTrack, myType, myTrRefIndex);
-					if (myRefTrack == theTrack)
+					if (myRefTrack == theTrack) {
 						myErr =
 							DeleteTrackReference(myTrack, myType, myTrRefIndex);
+					}
 				}
 
 				myType = GetNextTrackReferenceType(myTrack, myType);
@@ -1603,7 +1633,7 @@ OSErr QTUtils_DeleteAllReferencesToTrack(Track theTrack)
 		}
 	}
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
@@ -1629,24 +1659,25 @@ TimeValue QTUtils_GetFrameDuration(Track theTrack)
 		NULL,  // don't return number of samples returned
 		NULL); // don't return sample flags
 
-	// make sure we return a legitimate value even if GetMediaSample encounters
-	// an error
-	if (myErr != noErr)
+	// make sure we return a legitimate value even if GetMediaSample
+	// encounters an error
+	if (myErr != noErr) {
 		mySampleDuration = 0;
-
-	return (mySampleDuration);
+	}
+	return mySampleDuration;
 }
 
 //////////
 //
 // QTUtils_GetFrameCount
-// Get the number of frames in the specified movie track. We return the value -1
-// if an error occurs and we cannot determine the number of frames in the track.
+// Get the number of frames in the specified movie track. We return the
+// value -1 if an error occurs and we cannot determine the number of frames
+// in the track.
 //
 // Based (loosely) on frame-counting code in ConvertToMovie Jr.c.
 //
-// We count the frames in the track by stepping through all of its interesting
-// times (the places where the track displays a new sample).
+// We count the frames in the track by stepping through all of its
+// interesting times (the places where the track displays a new sample).
 //
 //////////
 
@@ -1656,27 +1687,25 @@ long QTUtils_GetFrameCount(Track theTrack)
 	short myFlags;
 	TimeValue myTime = 0;
 
-	if (theTrack == NULL)
-		goto bail;
+	if (theTrack != NULL) {
 
-	// we want to begin with the first frame (sample) in the track
-	myFlags = nextTimeMediaSample + nextTimeEdgeOK;
+		// we want to begin with the first frame (sample) in the track
+		myFlags = nextTimeMediaSample + nextTimeEdgeOK;
 
-	while (myTime >= 0) {
-		myCount++;
+		while (myTime >= 0) {
+			myCount++;
 
-		// look for the next frame in the track; when there are no more frames,
-		// myTime is set to -1, so we'll exit the while loop
-		GetTrackNextInterestingTime(
-			theTrack, myFlags, myTime, fixed1, &myTime, NULL);
+			// look for the next frame in the track; when there are no more
+			// frames, myTime is set to -1, so we'll exit the while loop
+			GetTrackNextInterestingTime(
+				theTrack, myFlags, myTime, fixed1, &myTime, NULL);
 
-		// after the first interesting time, don't include the time we're
-		// currently at
-		myFlags = nextTimeStep;
+			// after the first interesting time, don't include the time we're
+			// currently at
+			myFlags = nextTimeStep;
+		}
 	}
-
-bail:
-	return (myCount);
+	return myCount;
 }
 
 //////////
@@ -1698,8 +1727,9 @@ void QTUtils_GetMaxWindowDepth(
 	*thePixelType = k1MonochromePixelFormat;
 	*thePixelSize = 0;
 
-	if (theWindow == NULL)
+	if (theWindow == NULL) {
 		return;
+	}
 
 	GetWindowPortBounds(theWindow, &myRect);
 
@@ -1728,7 +1758,8 @@ void QTUtils_GetMaxScreenDepth(
 	GDHandle myGDevice = NULL;
 	PixMapHandle myPixMap = NULL;
 
-	myGDevice = GetMaxDevice(theGlobalRect); // get the max device
+	// get the max device
+	myGDevice = GetMaxDevice(theGlobalRect);
 	if (myGDevice != NULL) {
 		// get the pixmap for the max device
 		myPixMap = (**myGDevice).gdPMap;
@@ -1743,9 +1774,9 @@ void QTUtils_GetMaxScreenDepth(
 //////////
 //
 // QTUtils_GetUsersConnectionSpeed
-// Return the connection speed selected by the user in the QuickTime Settings
-// control panel; return kDataRate288ModemRate if the user's QuickTime
-// preferences cannot be read of if some other error occurs.
+// Return the connection speed selected by the user in the QuickTime
+// Settings control panel; return kDataRate288ModemRate if the user's
+// QuickTime preferences cannot be read of if some other error occurs.
 //
 // Based on code in Ice Floe Dispatch 17 by Mike Dodd.
 //
@@ -1773,18 +1804,18 @@ long QTUtils_GetUsersConnectionSpeed(void)
 			ConnectionSpeedPrefsType, 1, NULL);
 		if (myPrefsAtom != 0) {
 			// we found the desired atom in the returned atom container;
-			// read the data contained in that atom and verify that the data is
-			// of the size we are expecting
+			// read the data contained in that atom and verify that the data
+			// is of the size we are expecting
 			QTGetAtomDataPtr(
 				myPrefsContainer, myPrefsAtom, &myDataSize, &myAtomData);
 
 			if (myDataSize == sizeof(ConnectionSpeedPrefsRecord)) {
 				// read the connection speed
 
-				// NOTE: the data in this atom is native-endian, so we do not
-				// need to perform any endian-swapping when extracting the speed
-				// from the atom. (This is an exception to the rule that data in
-				// atom containers is always big-endian.)
+				// NOTE: the data in this atom is native-endian, so we do
+				// not need to perform any endian-swapping when extracting
+				// the speed from the atom. (This is an exception to the
+				// rule that data in atom containers is always big-endian.)
 				myPrefsRec = *(ConnectionSpeedPrefsRecord*)myAtomData;
 				mySpeed = myPrefsRec.connectionSpeed;
 			}
@@ -1793,7 +1824,7 @@ long QTUtils_GetUsersConnectionSpeed(void)
 		QTDisposeAtomContainer(myPrefsContainer);
 	}
 
-	return (mySpeed);
+	return mySpeed;
 }
 
 //////////
@@ -1802,10 +1833,11 @@ long QTUtils_GetUsersConnectionSpeed(void)
 // Set the connection speed in the QuickTime Settings control panel to the
 // specified value.
 //
-// NOTE: In general, you should let the user decide the connection speed (using
-// the QuickTime Settings control panel). In some cases, however, you might need
-// to do this programmatically. Also, you should in general use values for
-// theSpeed that are enumerated in the header file MoviesFormat.h.
+// NOTE: In general, you should let the user decide the connection speed
+// (using the QuickTime Settings control panel). In some cases, however, you
+// might need to do this programmatically. Also, you should in general use
+// values for theSpeed that are enumerated in the header file
+// MoviesFormat.h.
 //
 // Based on code in Ice Floe Dispatch 17 by Mike Dodd.
 //
@@ -1819,10 +1851,10 @@ OSErr QTUtils_SetUsersConnectionSpeed(long theSpeed)
 
 	myErr = QTNewAtomContainer(&myPrefsContainer);
 	if (myErr == noErr) {
-		// NOTE: the data in this atom is native-endian, so we do not need to
-		// perform any endian-swapping when inserting the speed into the atom.
-		// (This is an exception to the rule that data in atom containers is
-		// always big-endian.)
+		// NOTE: the data in this atom is native-endian, so we do not need
+		// to perform any endian-swapping when inserting the speed into the
+		// atom. (This is an exception to the rule that data in atom
+		// containers is always big-endian.)
 		myPrefsRec.connectionSpeed = theSpeed;
 
 		myErr = QTInsertChild(myPrefsContainer, kParentAtomIsContainer,
@@ -1835,16 +1867,17 @@ OSErr QTUtils_SetUsersConnectionSpeed(long theSpeed)
 		QTDisposeAtomContainer(myPrefsContainer);
 	}
 
-	return (myErr);
+	return myErr;
 }
 
 #if CONTENT_RATING_AVAIL
 //////////
 //
 // QTUtils_GetUsersContentRating
-// Return, through the function's parameters, the content rating and acceptable
-// content types selected by the user in the QuickTime Settings control panel;
-// return an error if the user's QuickTime preferences cannot be read.
+// Return, through the function's parameters, the content rating and
+// acceptable content types selected by the user in the QuickTime Settings
+// control panel; return an error if the user's QuickTime preferences cannot
+// be read.
 //
 // Based on QTUtils_GetUsersConnectionSpeed.
 //
@@ -1870,14 +1903,14 @@ OSErr QTUtils_GetUsersContentRating(UInt32* theType, UInt16* theRating)
 		myPrefsAtom = QTFindChildByID(myPrefsContainer, kParentAtomIsContainer,
 			kContentRatingPrefsType, 1, NULL);
 		if (myPrefsAtom == 0) {
-			// we did not find any such atom in the returned atom container, so
-			// we'll return default settings
+			// we did not find any such atom in the returned atom container,
+			// so we'll return default settings
 			*theType = 0L;
 			*theRating = kQTContentTVYRating;
 		} else {
 			// we found the desired atom in the returned atom container;
-			// read the data contained in that atom and verify that the data is
-			// of the size we are expecting
+			// read the data contained in that atom and verify that the data
+			// is of the size we are expecting
 			myErr = QTGetAtomDataPtr(
 				myPrefsContainer, myPrefsAtom, &myDataSize, &myAtomData);
 
@@ -1889,14 +1922,15 @@ OSErr QTUtils_GetUsersContentRating(UInt32* theType, UInt16* theRating)
 			} else {
 				// everything is fine: read the content information
 
-				// NOTE: the data in this atom is native-endian, so we do not
-				// need to perform any endian-swapping when extracting the data
-				// from the atom. (This is an exception to the rule that data in
-				// atom containers is always big-endian.)
+				// NOTE: the data in this atom is native-endian, so we do
+				// not need to perform any endian-swapping when extracting
+				// the data from the atom. (This is an exception to the rule
+				// that data in atom containers is always big-endian.)
 
-				// WARNING: the format of the data in a content rating atom is,
-				// to my knowledge, currently undocumented; the following method
-				// of extracting that info is based on empirical investigation.
+				// WARNING: the format of the data in a content rating atom
+				// is, to my knowledge, currently undocumented; the
+				// following method of extracting that info is based on
+				// empirical investigation.
 				myContentRec = *(ContentRatingPrefsRecord*)myAtomData;
 				*theType = (UInt32)(~(myContentRec.fContentTypes) & 0x00ff);
 				*theRating = myContentRec.fContentRating;
@@ -1906,7 +1940,7 @@ OSErr QTUtils_GetUsersContentRating(UInt32* theType, UInt16* theRating)
 		QTDisposeAtomContainer(myPrefsContainer);
 	}
 
-	return (myErr);
+	return myErr;
 }
 #endif // #if CONTENT_RATING_AVAIL
 
@@ -1932,18 +1966,20 @@ OSType QTUtils_GetControllerType(Movie theMovie)
 	OSErr myErr = noErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		return (myType);
+	if (theMovie == NULL) {
+		return myType;
+	}
 
 	myUserData = GetMovieUserData(theMovie);
 	if (myUserData != NULL) {
 		myErr = GetUserDataItem(myUserData, &myType, sizeof(myType),
 			kUserDataMovieControllerType, 0);
-		if (myErr == noErr)
+		if (myErr == noErr) {
 			myType = EndianU32_BtoN(myType);
+		}
 	}
 
-	return (myType);
+	return myType;
 }
 
 //////////
@@ -1955,8 +1991,8 @@ OSType QTUtils_GetControllerType(Movie theMovie)
 // the updated user data is written to the movie file when the movie is next
 // updated (by calling AddMovieResource or UpdateMovieResource).
 //
-// NOTE: This function is intended to set the controller type of a movie you're
-// building; to change the controller of an open movie, use
+// NOTE: This function is intended to set the controller type of a movie
+// you're building; to change the controller of an open movie, use
 // QTUtils_ChangeControllerType.
 //
 //////////
@@ -1967,27 +2003,30 @@ OSErr QTUtils_SetControllerType(Movie theMovie, OSType theType)
 	OSErr myErr = noErr;
 
 	// make sure we've got a movie
-	if (theMovie == NULL)
-		return (paramErr);
+	if (theMovie == NULL) {
+		return paramErr;
+	}
 
 	// get the movie's user data list
 	myUserData = GetMovieUserData(theMovie);
-	if (myUserData == NULL)
-		return (paramErr);
+	if (myUserData == NULL) {
+		return paramErr;
+	}
 
 	theType = EndianU32_NtoB(theType);
 	myErr = SetUserDataItem(
 		myUserData, &theType, sizeof(theType), kUserDataMovieControllerType, 0);
 
-	return (myErr);
+	return myErr;
 }
 
 //////////
 //
 // QTUtils_ChangeControllerType
-// Change the controller type of the movie that uses the specified controller,
-// "on the fly", and return the new movie controller to the caller; if for some
-// reason we cannot create a new movie controller, return NULL.
+// Change the controller type of the movie that uses the specified
+// controller, "on the fly", and return the new movie controller to the
+// caller; if for some reason we cannot create a new movie controller,
+// return NULL.
 //
 //////////
 
@@ -2000,20 +2039,23 @@ MovieController QTUtils_ChangeControllerType(
 	OSErr myErr = noErr;
 
 	// make sure we've got a movie controller
-	if (theMC == NULL)
-		return (NULL);
+	if (theMC == NULL) {
+		return NULL;
+	}
 
 	// get the movie associated with that controller
 	myMovie = MCGetMovie(theMC);
-	if (myMovie == NULL)
-		return (NULL);
+	if (myMovie == NULL) {
+		return NULL;
+	}
 
 	GetMovieBox(myMovie, &myRect);
 
 	// set the new controller type in the movie's user data list
 	myErr = QTUtils_SetControllerType(myMovie, theType);
-	if (myErr != noErr)
-		return (NULL);
+	if (myErr != noErr) {
+		return NULL;
+	}
 
 	// dispose of the existing controller
 	DisposeMovieController(theMC);
@@ -2021,7 +2063,7 @@ MovieController QTUtils_ChangeControllerType(
 	// create a new controller of the specified type
 	myMC = NewMovieController(myMovie, &myRect, theFlags);
 
-	return (myMC);
+	return myMC;
 }
 
 #endif // ifndef __QTUtilities__

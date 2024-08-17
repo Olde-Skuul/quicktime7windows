@@ -184,7 +184,7 @@ AFlagsReleasew32= -d__WIN32__=1 -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN3
 # Set the Linker flags for each of the build types
 #
 
-LFlagsReleasew32= system nt libp ..\..\WatcomLibraries;..\..\Libraries LIBRARY Kernel32.lib,Gdi32.lib,Shell32.lib,Ole32.lib,User32.lib,Advapi32.lib,version.lib,Ws2_32.lib,Comctl32.lib,WinMM.lib,WatcomLibrarieswatw32rel.lib,QTMLClient.lib
+LFlagsReleasew32= system nt libp ../../WatcomLibraries;../../Libraries LIBRARY Kernel32.lib,Gdi32.lib,Shell32.lib,Ole32.lib,User32.lib,Advapi32.lib,version.lib,Ws2_32.lib,Comctl32.lib,WinMM.lib,WatcomLibrarieswatw32rel.lib,QTMLClient.lib
 
 #
 # Set the Resource flags for each of the build types
@@ -252,4 +252,5 @@ RC_OBJS=
 A = $(BASE_TEMP_DIR)watw32rel
 bin\QTSDK-masterwatw32rel.exe: $(EXTRA_OBJS) $+$(OBJS)$- QTSDK-masterwatw32.wmk
 	@SET WOW={$+$(OBJS)$-}
+	@echo Performing link...
 	@$(LINK) $(LFlagsReleasew32) NAME $^@ FILE @wow

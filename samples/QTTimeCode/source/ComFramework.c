@@ -455,15 +455,15 @@ Boolean QTFrame_CreateNewMovie(void)
 	StringPtr myName = QTUtils_ConvertCToPascalString(kNewMovieName);
 
 	myMovie = NewMovie(newMovieActive);
-	if (myMovie == NULL)
-		return (false);
+	if (myMovie == NULL) {
+		return false;
+	}
 
 	// create a default FSSpec
 	FSMakeFSSpec(0, 0L, myName, &myFSSpec);
 
 	free(myName);
-
-	return (QTFrame_OpenMovieInWindow(myMovie, &myFSSpec));
+	return QTFrame_OpenMovieInWindow(myMovie, &myFSSpec);
 }
 
 //////////
@@ -522,11 +522,12 @@ Boolean QTFrame_OpenMovieInWindow(Movie theMovie, FSSpec* theFSSpec)
 		myErr = QTFrame_GetOneFileWithPreview(myNumTypes,
 			(QTFrameTypeListPtr)myTypeList, &myFSSpec, (void*)myFileFilterUPP);
 
-		if (myFileFilterUPP != NULL)
+		if (myFileFilterUPP != NULL) {
 			DisposeNavObjectFilterUPP(myFileFilterUPP);
-
-		if (myErr != noErr)
+		}
+		if (myErr != noErr) {
 			goto bail;
+		}
 	}
 
 	// if we got an FSSpec passed in, copy it into myFSSpec
@@ -537,29 +538,34 @@ Boolean QTFrame_OpenMovieInWindow(Movie theMovie, FSSpec* theFSSpec)
 
 	// if we got no movie passed in, read one from the specified file
 	if (theMovie == NULL) {
+
 		// see if the FSSpec picks out an image file; if so, skip the
 		// movie-opening code
 		myErr = GetGraphicsImporterForFile(&myFSSpec, &myImporter);
-		if (myImporter != NULL)
+		if (myImporter != NULL) {
 			goto gotImageFile;
+		}
 
 		// ideally, we'd like read and write permission, but we'll settle for
 		// read-only permission
 		myErr = OpenMovieFile(&myFSSpec, &myRefNum, fsRdWrPerm);
-		if (myErr != noErr)
+		if (myErr != noErr) {
 			myErr = OpenMovieFile(&myFSSpec, &myRefNum, fsRdPerm);
+		}
 
 		// if we couldn't open the file with even just read-only permission,
 		// bail....
-		if (myErr != noErr)
+		if (myErr != noErr) {
 			goto bail;
+		}
 
 		// now fetch the first movie from the file
 		myResID = 0;
 		myErr = NewMovieFromFile(
 			&myMovie, myRefNum, &myResID, NULL, newMovieActive, NULL);
-		if (myErr != noErr)
+		if (myErr != noErr) {
 			goto bail;
+		}
 	} else {
 		myMovie = theMovie;
 	}
@@ -577,24 +583,28 @@ Boolean QTFrame_OpenMovieInWindow(Movie theMovie, FSSpec* theFSSpec)
 gotImageFile:
 	// create a new window to display the movie in
 	myWindow = QTFrame_CreateMovieWindow();
-	if (myWindow == NULL)
+	if (myWindow == NULL) {
 		goto bail;
+	}
 
 	myWindowObject = QTFrame_GetWindowObjectFromWindow(myWindow);
-	if (myWindowObject == NULL)
+	if (myWindowObject == NULL) {
 		goto bail;
+	}
 
 	// set the window title
 	QTFrame_SetWindowTitleFromFSSpec(myWindow, &myFSSpec, true);
 
 	// make sure the movie or image file uses the window GWorld
-	if (myMovie != NULL)
+	if (myMovie != NULL) {
 		SetMovieGWorld(myMovie,
 			(CGrafPtr)QTFrame_GetPortFromWindowReference(myWindow), NULL);
+	}
 
-	if (myImporter != NULL)
+	if (myImporter != NULL) {
 		GraphicsImportSetGWorld(myImporter,
 			(CGrafPtr)QTFrame_GetPortFromWindowReference(myWindow), NULL);
+	}
 
 	// create and configure the movie controller
 	myMC = QTFrame_SetupController(myMovie, myWindow, true);
@@ -697,13 +707,15 @@ MovieController QTFrame_SetupController(
 	WindowObject myWindowObject = NULL;
 	GrafPtr mySavedPort;
 
-	if ((theMovie == NULL) || (theWindow == NULL))
-		return (NULL);
+	if ((theMovie == NULL) || (theWindow == NULL)) {
+		return NULL;
+	}
 
 	// get our window specific data
 	myWindowObject = QTFrame_GetWindowObjectFromWindow(theWindow);
-	if (myWindowObject == NULL)
-		return (NULL);
+	if (myWindowObject == NULL) {
+		return NULL;
+	}
 
 	GetPort(&mySavedPort);
 	MacSetPort(QTFrame_GetPortFromWindowReference(theWindow));
@@ -717,14 +729,15 @@ MovieController QTFrame_SetupController(
 
 	// create the movie controller
 	myMC = NewMovieController(theMovie, &myRect, mcTopLeftMovie);
-	if (myMC == NULL)
-		return (NULL);
+	if (myMC == NULL) {
+		return NULL;
+	}
 
 	// enable the default movie controller editing
 	MCEnableEditing(myMC, true);
 
 	// suppress movie badge
-	MCDoAction(myMC, mcActionSetUseBadge, (void*)false);
+	MCDoAction(myMC, mcActionSetUseBadge, NULL);
 
 	// set the initial looping state of the movie
 	QTUtils_SetLoopingStateFromFile(theMovie, myMC);

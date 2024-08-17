@@ -34,7 +34,11 @@
 //////////
 
 #ifndef PASCAL_RTN
+#if defined(__WATCOMC__)
+#define PASCAL_RTN __declspec(__cdecl)
+#else
 #define PASCAL_RTN
+#endif
 #endif
 
 //////////

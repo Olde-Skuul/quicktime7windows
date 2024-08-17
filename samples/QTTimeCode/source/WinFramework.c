@@ -95,6 +95,7 @@ LPSTR gCmdLine; // the command line passed to WinMain
 extern Rect gMCResizeBounds; // maximum size for any movie window
 
 ModalFilterUPP gModalFilterUPP = NULL; // UPP to our custom dialog event filter
+bool bFirstTime = true;
 
 //////////
 //
@@ -107,9 +108,10 @@ ModalFilterUPP gModalFilterUPP = NULL; // UPP to our custom dialog event filter
 //
 //////////
 
-int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	LPSTR theCmdLine, int nCmdShow)
 {
+#pragma unused(hPrevInstance)
 	HANDLE myAccel;
 	HWND myWindowFrame;
 	MSG myMsg;
@@ -121,53 +123,51 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	ghInst = hInstance;
 	gCmdLine = theCmdLine;
 
-	if (hPrevInstance == NULL) {
-		LoadString(hInstance, IDS_APPNAME, gAppName, sizeof(gAppName));
+	LoadString(hInstance, IDS_APPNAME, gAppName, sizeof(gAppName));
 
-		// register the frame window class
-		myWC.cbSize = sizeof(WNDCLASSEX);
-		myWC.style = CS_HREDRAW | CS_VREDRAW;
-		myWC.lpfnWndProc = (WNDPROC)QTFrame_FrameWndProc;
-		myWC.cbClsExtra = 0;
-		myWC.cbWndExtra = 0;
-		myWC.hInstance = hInstance;
-		myWC.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPICON));
-		myWC.hCursor = LoadCursor(NULL, IDC_ARROW);
-		myWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-		myWC.lpszMenuName = gAppName;
-		myWC.lpszClassName = gAppName;
-		myWC.hIconSm = LoadImage(
-			hInstance, MAKEINTRESOURCE(IDI_APPICON), IMAGE_ICON, 16, 16, 0);
+	// register the frame window class
+	myWC.cbSize = sizeof(WNDCLASSEX);
+	myWC.style = CS_HREDRAW | CS_VREDRAW;
+	myWC.lpfnWndProc = QTFrame_FrameWndProc;
+	myWC.cbClsExtra = 0;
+	myWC.cbWndExtra = 0;
+	myWC.hInstance = hInstance;
+	myWC.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_APPICON));
+	myWC.hCursor = LoadCursor(NULL, IDC_ARROW);
+	myWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	myWC.lpszMenuName = gAppName;
+	myWC.lpszClassName = gAppName;
+	myWC.hIconSm = LoadImage(
+		hInstance, MAKEINTRESOURCE(IDI_APPICON), IMAGE_ICON, 16, 16, 0);
 
-		if (!RegisterClassEx(&myWC)) {
-			if (!RegisterClass((LPWNDCLASS)&myWC.style)) {
-				return (0);
-			}
+	if (!RegisterClassEx(&myWC)) {
+		if (!RegisterClass((LPWNDCLASS)&myWC.style)) {
+			return 0;
 		}
+	}
 
-		// register the movie child window class
-		myWC.cbSize = sizeof(WNDCLASSEX);
-		myWC.style = 0;
-		myWC.lpfnWndProc = (WNDPROC)QTFrame_MovieWndProc;
-		myWC.cbClsExtra = 0;
-		myWC.cbWndExtra = 0;
-		myWC.hInstance = hInstance;
-		myWC.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHILDICON));
-		// to avoid having QuickTime VR "fight" with the system over the cursor,
-		// we set the client area cursor to NULL; this means that for QuickTime
-		// movies, we'll need to change the cursor to an arrow manually; see the
-		// handling of the WM_MOUSEMOVE message in QTFrame_MovieWndProc
-		myWC.hCursor = NULL;
-		myWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-		myWC.lpszMenuName = NULL;
-		myWC.lpszClassName = gChildName;
-		myWC.hIconSm = LoadImage(
-			hInstance, MAKEINTRESOURCE(IDI_CHILDICON), IMAGE_ICON, 16, 16, 0);
+	// register the movie child window class
+	myWC.cbSize = sizeof(WNDCLASSEX);
+	myWC.style = 0;
+	myWC.lpfnWndProc = QTFrame_MovieWndProc;
+	myWC.cbClsExtra = 0;
+	myWC.cbWndExtra = 0;
+	myWC.hInstance = hInstance;
+	myWC.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_CHILDICON));
+	// to avoid having QuickTime VR "fight" with the system over the cursor,
+	// we set the client area cursor to NULL; this means that for QuickTime
+	// movies, we'll need to change the cursor to an arrow manually; see the
+	// handling of the WM_MOUSEMOVE message in QTFrame_MovieWndProc
+	myWC.hCursor = NULL;
+	myWC.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	myWC.lpszMenuName = NULL;
+	myWC.lpszClassName = gChildName;
+	myWC.hIconSm = LoadImage(
+		hInstance, MAKEINTRESOURCE(IDI_CHILDICON), IMAGE_ICON, 16, 16, 0);
 
-		if (!RegisterClassEx(&myWC)) {
-			if (!RegisterClass((LPWNDCLASS)&myWC.style)) {
-				return 0;
-			}
+	if (!RegisterClassEx(&myWC)) {
+		if (!RegisterClass((LPWNDCLASS)&myWC.style)) {
+			return 0;
 		}
 	}
 
@@ -208,14 +208,15 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	QTApp_Init(kInitAppPhase_BeforeCreateFrameWindow);
 
 	// create the main frame window
-	myWindowFrame = CreateWindow(gAppName, gAppName,
+	myWindowFrame = CreateWindowA(gAppName, gAppName,
 		WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN, CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, hInstance, NULL);
 	ghWnd = myWindowFrame;
 
 	// make sure we got a frame window
-	if (myWindowFrame == NULL)
-		return (0);
+	if (myWindowFrame == NULL) {
+		return 0;
+	}
 
 	// show the window
 	ShowWindow(myWindowFrame, nCmdShow);
@@ -236,14 +237,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	}
 
 	// close the application's resource file, if it was previously opened
-	if (gAppResFile != kInvalidFileRefNum)
+	if (gAppResFile != kInvalidFileRefNum) {
 		CloseResFile(gAppResFile);
+	}
 
 	// terminate the QuickTime Media Layer
 	ExitMovies();
 	TerminateQTML();
 
-	return (int)myMsg.wParam; // returns the value from PostQuitMessage
+	// returns the value from PostQuitMessage
+	return (int)myMsg.wParam;
 }
 
 //////////
@@ -267,7 +270,7 @@ LRESULT CALLBACK QTFrame_FrameWndProc(
 		myClientStruct.idFirstChild = IDM_WINDOWCHILD;
 
 		// create the MDI client filling the client area
-		ghWndMDIClient = CreateWindow("mdiclient", NULL,
+		ghWndMDIClient = CreateWindowA("mdiclient", NULL,
 			WS_CHILD | WS_CLIPCHILDREN | WS_VSCROLL | WS_HSCROLL, 0, 0, 0, 0,
 			theWnd, (HMENU)0xCAC, ghInst, (LPVOID)&myClientStruct);
 
@@ -283,7 +286,7 @@ LRESULT CALLBACK QTFrame_FrameWndProc(
 	case WM_ACTIVATE:
 		// the MDI frame window is being activated or deactivated;
 		// activate or deactivate any active child window by sending this
-		// message to DefMDIChildProc
+		// message to DefMDIChildProcA
 		myChild = (HWND)SendMessage(ghWndMDIClient, WM_MDIGETACTIVE, 0, 0L);
 		if (IsWindow(myChild))
 			SendMessage(myChild, WM_ACTIVATE, wParam, lParam);
@@ -297,7 +300,7 @@ LRESULT CALLBACK QTFrame_FrameWndProc(
 		case IDM_FILECLOSE:
 		case IDM_EXIT:
 			QTFrame_HandleFileMenuItem(NULL, LOWORD(wParam));
-			return (0);
+			return 0;
 
 		case IDM_FILESAVE:
 		case IDM_FILESAVEAS:
@@ -633,7 +636,7 @@ LRESULT CALLBACK QTFrame_MovieWndProc(
 		break;
 	}
 
-	return (DefMDIChildProc(theWnd, theMessage, wParam, lParam));
+	return (DefMDIChildProcA(theWnd, theMessage, wParam, lParam));
 }
 
 //////////
@@ -679,7 +682,7 @@ void QTFrame_OpenCommandLineMovies(LPSTR theCmdLine)
 	SHFILEINFO myFileInfo;
 
 	// get the command line for the current process
-	myCmdLine = GetCommandLine();
+	myCmdLine = GetCommandLineA();
 
 	// parse the command line
 	if (*myCmdLine) {
@@ -713,7 +716,7 @@ void QTFrame_OpenCommandLineMovies(LPSTR theCmdLine)
 						myTempName[myIndex] = '\0';
 						strcpy(myBuffName, myTempName);
 
-						myFindFile = FindFirstFile(myBuffName, &myFile);
+						myFindFile = FindFirstFileA(myBuffName, &myFile);
 						if (myFindFile != INVALID_HANDLE_VALUE) {
 							// we found a file having the specified name; close
 							// our file search and break out of our
@@ -729,14 +732,15 @@ void QTFrame_OpenCommandLineMovies(LPSTR theCmdLine)
 					myFileName[myIndex] = myTempName[myIndex] = *myCmdLine;
 				}
 
-				if (*myCmdLine != '\0')
+				if (*myCmdLine != '\0') {
 					myCmdLine++;
+				}
 
 				// add a terminating NULL character
 				myFileName[myIndex] = '\0';
 
 				// make sure the filename picks out a QuickTime movie
-				SHGetFileInfo(myFileName, (DWORD)0, &myFileInfo,
+				SHGetFileInfoA(myFileName, (DWORD)0, &myFileInfo,
 					sizeof(myFileInfo), SHGFI_TYPENAME);
 				if (strcmp(myFileInfo.szTypeName, gMovieType) != 0)
 					continue;
@@ -748,8 +752,9 @@ void QTFrame_OpenCommandLineMovies(LPSTR theCmdLine)
 				QTFrame_OpenMovieInWindow(NULL, &myFSSpec);
 			}
 
-		} else
+		} else {
 			myCmdLine += strlen(myCmdLine); // point to NULL
+		}
 	}
 }
 
@@ -777,10 +782,11 @@ WindowReference QTFrame_CreateMovieWindow(void)
 	gWeAreCreatingWindow = false;
 
 	// make sure the new window has the keyboard focus
-	if (myWindow != NULL)
+	if (myWindow != NULL) {
 		SetFocus(myWindow);
+	}
 
-	return (myWindow);
+	return myWindow;
 }
 
 //////////
@@ -815,13 +821,13 @@ void QTFrame_GetDisplayName(char* thePathName, char* theDispName)
 	SHFILEINFO myFileInfo;
 	DWORD myResult;
 
-	myResult = SHGetFileInfo(thePathName, (DWORD)0, &myFileInfo,
+	myResult = SHGetFileInfoA(thePathName, (DWORD)0, &myFileInfo,
 		sizeof(myFileInfo), SHGFI_DISPLAYNAME);
 	if (myResult != 0) {
-		// SHGetFileInfo successful
+		// SHGetFileInfoA successful
 		strcpy(theDispName, myFileInfo.szDisplayName);
 	} else {
-		// SHGetFileInfo not successful, so find the basename ourselves
+		// SHGetFileInfoA not successful, so find the basename ourselves
 		short myLength = 0;
 		short myIndex;
 

@@ -133,12 +133,12 @@ TEMP_DIR = temp\WatcomLibraries$(BASE_SUFFIX)
 
 #
 # Set the set of known files supported
-# Note: They are in the reverse order of building. .c is built first, then .x86
+# Note: They are in the reverse order of building. .x86 is built first, then .c
 # until the .exe or .lib files are built
 #
 
 .extensions:
-.extensions: .exe .exp .lib .obj .h .cpp .x86 .c .i86
+.extensions: .exe .exp .lib .obj .h .cpp .c .x86 .i86 .res .rc
 
 #
 # SOURCE_DIRS = Work directories for the source code
@@ -152,6 +152,7 @@ SOURCE_DIRS =source
 
 INCLUDE_DIRS = $(SOURCE_DIRS)
 INCLUDE_DIRS +=;../CIncludes
+
 #
 # Tell WMAKE where to find the files to work with
 #
@@ -160,6 +161,7 @@ INCLUDE_DIRS +=;../CIncludes
 .cpp: $(SOURCE_DIRS)
 .x86: $(SOURCE_DIRS)
 .i86: $(SOURCE_DIRS)
+.rc: $(SOURCE_DIRS)
 
 #
 # Set the compiler flags for each of the build types
@@ -179,12 +181,19 @@ AFlagsReleasew32= -d__WIN32__=1 -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN3
 
 LFlagsReleasew32= system nt
 
+#
+# Set the Resource flags for each of the build types
+#
+
+RFlagsReleasew32= -bt=nt -i="$(%WATCOM)/h/nt" -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN32
+
 # Now, set the compiler flags
 
 CL=WCC386 -6r -fp6 -w4 -ei -j -mf -zq -zp=8 -wcd=7 -i="$(INCLUDE_DIRS)"
 CP=WPP386 -6r -fp6 -w4 -ei -j -mf -zq -zp=8 -wcd=7 -i="$(INCLUDE_DIRS)"
 ASM=WASM -5r -fp6 -w4 -zq -d__WATCOM__=1
 LINK=*WLINK option caseexact option quiet PATH $(%WATCOM)/binnt;$(%WATCOM)/binw;.
+RC=WRC -ad -r -q -d__WATCOM__=1 -i="$(INCLUDE_DIRS)"
 
 # Set the default build rules
 # Requires ASM, CP to be set
@@ -194,6 +203,10 @@ LINK=*WLINK option caseexact option quiet PATH $(%WATCOM)/binnt;$(%WATCOM)/binw;
 # $[* = C:\dir\dep (No extension)
 # $^@ = C:\dir\target.ext
 # $^: = C:\dir\
+
+.rc.res : .AUTODEPEND
+	@echo $[&.rc / $(%CONFIG) / $(%TARGET)
+	@$(RC) $(RFlags$(%CONFIG)$(%TARGET)) $[*.rc -fo=$^@
 
 .i86.obj : .AUTODEPEND
 	@echo $[&.i86 / $(%CONFIG) / $(%TARGET)
@@ -212,10 +225,16 @@ LINK=*WLINK option caseexact option quiet PATH $(%WATCOM)/binnt;$(%WATCOM)/binw;
 	@$(CP) $(CFlags$(%CONFIG)$(%TARGET)) $[*.cpp -fo=$^@ -fr=$^*.err
 
 #
-# Object files to work with for the library
+# Object files to work with for the project
 #
 
 OBJS= $(A)/QTLoadLibraryUtils.obj
+
+#
+# Resource files to work with for the project
+#
+
+RC_OBJS=
 
 #
 # A = The object file temp folder
@@ -224,4 +243,5 @@ OBJS= $(A)/QTLoadLibraryUtils.obj
 A = $(BASE_TEMP_DIR)watw32rel
 WatcomLibrarieswatw32rel.lib: $(EXTRA_OBJS) $+$(OBJS)$- WatcomLibrarieswatw32.wmk
 	@SET WOW=$+$(OBJS)$-
+	@echo Creating library...
 	@WLIB -q -b -c -n $^@ @WOW
