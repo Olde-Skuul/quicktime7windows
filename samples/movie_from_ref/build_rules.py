@@ -33,24 +33,3 @@ MAKEPROJECTS = (
      "ide": "xc3",
      "configuration": "Release"}
 )
-
-########################################
-
-
-def configuration_settings(configuration):
-    """
-    Set up defines and libraries on a configuration basis.
-
-    For each configation, set all configuration specific seting. Use
-    configuration.name to determine which configuration is being processed.
-
-    Args:
-        configuration: Configuration class instance to update.
-
-    Returns:
-        None, to continue processing, zero is no error and stop processing,
-        any other number is an error code.
-    """
-
-    # This sample requires C++ exceptions turned on
-    configuration.exceptions = True

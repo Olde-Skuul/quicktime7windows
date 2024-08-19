@@ -2,16 +2,36 @@
 # Build QTSDK-master with WMAKE
 # Generated with makeprojects.watcom
 #
-# Require the environment variable WATCOM set to the OpenWatcom folder
+# This file requires the environment variable WATCOM set to the OpenWatcom
+# folder
 # Example: WATCOM=C:\WATCOM
 #
 
-# This speeds up the building process for Watcom because it
-# keeps the apps in memory and doesn't have to reload for every source file
+#
+# Test for required environment variables
+#
+
+!ifndef %WATCOM
+!error The environment variable WATCOM was not declared
+!endif
+
+#
+# Set the set of known files supported
+# Note: They are in the reverse order of building. .x86 is built first, then .c
+# until the .exe or .lib files are built
+#
+
+.extensions:
+.extensions: .exe .exp .lib .obj .cpp .c .x86 .i86 .h .res .rc
+
+#
+# This speeds up the building process for Watcom because it keeps the apps in
+# memory and doesn't have to reload for every source file
 # Note: There is a bug that if the wlib app is loaded, it will not
 # get the proper WOW file if a full build is performed
-
+#
 # The bug is gone from Watcom 1.2
+#
 
 !ifdef %WATCOM
 !ifdef __LOADDLL__
@@ -97,14 +117,6 @@ QTSDK-masterwatw32.wmk:
 	@%null
 
 #
-# Required environment variables
-#
-
-!ifndef %WATCOM
-!error the environment variable WATCOM was not declared
-!endif
-
-#
 # Default configuration
 #
 
@@ -135,15 +147,6 @@ CONFIG_SUFFIX_Release = rel
 BASE_TEMP_DIR = temp\QTSDK-master
 BASE_SUFFIX = wat$(TARGET_SUFFIX_$(%TARGET))$(CONFIG_SUFFIX_$(%CONFIG))
 TEMP_DIR = temp\QTSDK-master$(BASE_SUFFIX)
-
-#
-# Set the set of known files supported
-# Note: They are in the reverse order of building. .x86 is built first, then .c
-# until the .exe or .lib files are built
-#
-
-.extensions:
-.extensions: .exe .exp .lib .obj .h .cpp .c .x86 .i86 .res .rc
 
 #
 # SOURCE_DIRS = Work directories for the source code
@@ -184,7 +187,7 @@ AFlagsReleasew32= -d__WIN32__=1 -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN3
 # Set the Linker flags for each of the build types
 #
 
-LFlagsReleasew32= system nt libp ../../WatcomLibraries;../../Libraries LIBRARY Kernel32.lib,Gdi32.lib,Shell32.lib,Ole32.lib,User32.lib,Advapi32.lib,version.lib,Ws2_32.lib,Comctl32.lib,WinMM.lib,WatcomLibrarieswatw32rel.lib,QTMLClient.lib
+LFlagsReleasew32= system nt libp ../../Libraries LIBRARY Kernel32.lib,Gdi32.lib,Shell32.lib,Ole32.lib,User32.lib,Advapi32.lib,version.lib,Ws2_32.lib,Comctl32.lib,WinMM.lib,QTWatcom.lib,QTMLClient.lib
 
 #
 # Set the Resource flags for each of the build types

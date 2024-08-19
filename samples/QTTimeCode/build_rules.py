@@ -27,6 +27,21 @@ PROJECT_TYPE = ProjectTypes.app
 # Can be overridden above
 CONTINUE = True
 
+# List of projects to generate if makeprojects is invoked
+# without any parameters, default create recommended
+# project for the host machine
+
+# Create windows projects for Watcom, VS 2022, and Codewarrior
+MAKEPROJECTS = (
+    {"platform": "win32",
+     "ide": "vs2022",
+     "configuration": "Release_LTCG"},
+    {"platform": "win32",
+     "ide": ("watcom", "codewarrior"),
+     "configuration": "Release"
+     }
+)
+
 ########################################
 
 

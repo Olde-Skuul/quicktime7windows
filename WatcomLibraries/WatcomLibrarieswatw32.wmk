@@ -2,16 +2,36 @@
 # Build WatcomLibraries with WMAKE
 # Generated with makeprojects.watcom
 #
-# Require the environment variable WATCOM set to the OpenWatcom folder
+# This file requires the environment variable WATCOM set to the OpenWatcom
+# folder
 # Example: WATCOM=C:\WATCOM
 #
 
-# This speeds up the building process for Watcom because it
-# keeps the apps in memory and doesn't have to reload for every source file
+#
+# Test for required environment variables
+#
+
+!ifndef %WATCOM
+!error The environment variable WATCOM was not declared
+!endif
+
+#
+# Set the set of known files supported
+# Note: They are in the reverse order of building. .x86 is built first, then .c
+# until the .exe or .lib files are built
+#
+
+.extensions:
+.extensions: .exe .exp .lib .obj .cpp .c .x86 .i86 .h .res .rc
+
+#
+# This speeds up the building process for Watcom because it keeps the apps in
+# memory and doesn't have to reload for every source file
 # Note: There is a bug that if the wlib app is loaded, it will not
 # get the proper WOW file if a full build is performed
-
+#
 # The bug is gone from Watcom 1.2
+#
 
 !ifdef %WATCOM
 !ifdef __LOADDLL__
@@ -67,19 +87,24 @@ clean_w32: clean_Releasew32 .SYMBOLIC
 #
 
 Releasew32: .SYMBOLIC
+	@if not exist bin @mkdir bin
 	@if not exist "temp\WatcomLibrarieswatw32rel" @mkdir "temp\WatcomLibrarieswatw32rel"
 	@set CONFIG=Release
 	@set TARGET=w32
-	@%make WatcomLibrarieswatw32rel.lib
+	@%make bin\WatcomLibrarieswatw32rel.lib
 
 clean_Releasew32: .SYMBOLIC
 	@if exist temp\WatcomLibrarieswatw32rel @rmdir /s /q temp\WatcomLibrarieswatw32rel
-	@if exist WatcomLibrarieswatw32rel.lib @del /q WatcomLibrarieswatw32rel.lib
+	@if exist bin\WatcomLibrarieswatw32rel.lib @del /q bin\WatcomLibrarieswatw32rel.lib
+	@-if exist bin @rmdir bin 2>NUL
 	@-if exist temp @rmdir temp 2>NUL
 
 #
 # Create the folder for the binary output
 #
+
+bin:
+	@if not exist bin @mkdir bin
 
 temp:
 	@if not exist temp @mkdir temp
@@ -90,14 +115,6 @@ temp:
 
 WatcomLibrarieswatw32.wmk:
 	@%null
-
-#
-# Required environment variables
-#
-
-!ifndef %WATCOM
-!error the environment variable WATCOM was not declared
-!endif
 
 #
 # Default configuration
@@ -130,15 +147,6 @@ CONFIG_SUFFIX_Release = rel
 BASE_TEMP_DIR = temp\WatcomLibraries
 BASE_SUFFIX = wat$(TARGET_SUFFIX_$(%TARGET))$(CONFIG_SUFFIX_$(%CONFIG))
 TEMP_DIR = temp\WatcomLibraries$(BASE_SUFFIX)
-
-#
-# Set the set of known files supported
-# Note: They are in the reverse order of building. .x86 is built first, then .c
-# until the .exe or .lib files are built
-#
-
-.extensions:
-.extensions: .exe .exp .lib .obj .h .cpp .c .x86 .i86 .res .rc
 
 #
 # SOURCE_DIRS = Work directories for the source code
@@ -241,7 +249,9 @@ RC_OBJS=
 #
 
 A = $(BASE_TEMP_DIR)watw32rel
-WatcomLibrarieswatw32rel.lib: $(EXTRA_OBJS) $+$(OBJS)$- WatcomLibrarieswatw32.wmk
+bin\WatcomLibrarieswatw32rel.lib: $(EXTRA_OBJS) $+$(OBJS)$- WatcomLibrarieswatw32.wmk
 	@SET WOW=$+$(OBJS)$-
 	@echo Creating library...
 	@WLIB -q -b -c -n $^@ @WOW
+	@echo Copying QTWatcom.lib...
+	@copy /y $^@ ..\Libraries\QTWatcom.lib

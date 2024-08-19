@@ -66,9 +66,6 @@ def library_settings(configuration):
     lib_dir = root_path + "\\Libraries"
     include_dir = root_path + "\\CIncludes"
 
-    # Special folder only for Watcom
-    watcom_dir = root_path + "\\WatcomLibraries"
-
     # If an environment variable was used, ensure the IDE tests
     # for it, just in case.
     if env_var and "BURGER_SDKS" not in configuration.env_variable_list:
@@ -86,8 +83,7 @@ def library_settings(configuration):
         # the original library was compiled with. To build, use
         # this shim that's built against the Watcom stdlib
         if ide is IDETypes.watcom:
-            configuration.libraries_list.append("WatcomLibrarieswatw32rel.lib")
-            configuration.library_folders_list.append(watcom_dir)
+            configuration.libraries_list.append("QTWatcom.lib")
 
         # Add in the real library file and directory for Windows
         configuration.libraries_list.append("QTMLClient.lib")
