@@ -9,6 +9,8 @@
 // Love those 8.3 filenames
 #if defined(__WATCOMC__)
 #include <algorith>
+#else
+#include <algorithm>
 #endif
 
 using namespace std;

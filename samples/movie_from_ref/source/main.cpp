@@ -68,13 +68,23 @@ Copyright (C) 2007 Apple Inc. All Rights Reserved.
 #import <QuickTime/QuickTime.h>
 #endif
 
-#if defined(_MSC_VER)
+#if (_MSC_VER >= 1900)
+// Symbol is never tested for nullness
 #pragma warning(disable : 26429)
+
+// Don't use a static_cast
 #pragma warning(disable : 26472)
+
+// Don't use pointer arithmetic
 #pragma warning(disable : 26481)
+
+// Don't use reinterpret_cast
 #pragma warning(disable : 26490)
+
+// Consider using constexpr
 #pragma warning(disable : 26814)
 #endif
+
 /*
 
 	Constants

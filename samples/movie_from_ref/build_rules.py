@@ -24,7 +24,7 @@ CONTINUE = True
 # Create windows projects for Watcom, VS 2022, and Codewarrior
 MAKEPROJECTS = (
     {"platform": "win32",
-     "ide": "vs2022",
+     "ide": ("vs2003", "vs2022"),
      "configuration": "Release_LTCG"},
     {"platform": "win32",
      "ide": ("watcom", "codewarrior"),

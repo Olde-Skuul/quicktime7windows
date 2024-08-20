@@ -122,6 +122,12 @@
 #include "ComFramework.h"
 
 #if defined(_MSC_VER)
+// Conversion from function pointer to data pointer
+#pragma warning(disable : 4054)
+
+// Conversion from data pointer to function pointer
+#pragma warning(disable : 4055)
+
 // Disable unreferenced formal parameters
 #pragma warning(disable : 4100)
 #endif

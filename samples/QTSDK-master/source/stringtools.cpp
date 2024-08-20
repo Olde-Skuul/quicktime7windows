@@ -33,18 +33,18 @@ vector<string> split(const string& rInstring, const string& rDelim)
 
 	int offset = (int)rInstring.find(rDelim);
 
-	if (offset == string::npos) {
+	if (offset == (int)string::npos) {
 		return returnvector;
 	}
 
 	int start = 0;
-	while (offset != string::npos) {
+	while (offset != (int)string::npos) {
 		returnvector.push_back(rInstring.substr(
 			(string::size_type)start, (string::size_type)(offset - start)));
 		start = offset + 1;
 		offset = (int)rInstring.find(rDelim, (string::size_type)start);
 
-		if (offset == string::npos) {
+		if (offset == (int)string::npos) {
 			returnvector.push_back(
 				rInstring.substr((string::size_type)start, rInstring.size()));
 		}

@@ -1,0 +1,18 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "movie_from_ref", "movie_from_refvc7w32.vcproj", "{E336F11A-A9B5-31E3-8F07-DEB7742FE2AB}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Release_LTCG = Release_LTCG
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{E336F11A-A9B5-31E3-8F07-DEB7742FE2AB}.Release_LTCG.ActiveCfg = Release_LTCG|Win32
+		{E336F11A-A9B5-31E3-8F07-DEB7742FE2AB}.Release_LTCG.Build.0 = Release_LTCG|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

@@ -891,7 +891,7 @@ enum {
 */
 UC_INLINE Boolean UCIsSurrogateHighCharacter( UniChar character ) {
     /* return ( ( character >= kUCHighSurrogateRangeStart ) && (character <= kUCHighSurrogateRangeEnd ) ? true : false ); */
-   return ( ( character & 0xFC00UL ) == kUCHighSurrogateRangeStart );
+   return (Boolean)( ( character & 0xFC00UL ) == kUCHighSurrogateRangeStart );
 }
 
 /*!
@@ -902,7 +902,7 @@ UC_INLINE Boolean UCIsSurrogateHighCharacter( UniChar character ) {
 */
 UC_INLINE Boolean UCIsSurrogateLowCharacter( UniChar character ) {
   /* return ( ( character >= kUCLowSurrogateRangeStart ) && ( character <= kUCLowSurrogateRangeEnd ) ? true : false ); */
-    return ( ( character & 0xFC00UL ) == kUCLowSurrogateRangeStart );
+    return (Boolean)( ( character & 0xFC00UL ) == kUCLowSurrogateRangeStart );
 }
 
 /*!

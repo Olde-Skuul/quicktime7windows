@@ -179,7 +179,7 @@ Boolean QTUtils_IsQuickTimeInstalled(void)
 {
 	long myAttrs;
 	OSErr myErr = Gestalt(gestaltQuickTime, &myAttrs);
-	return (myErr == noErr);
+	return (Boolean)(myErr == noErr);
 }
 
 //////////
@@ -250,8 +250,8 @@ long QTUtils_GetQTVersion(void)
 
 Boolean QTUtils_HasQuickTimeVideoEffects(void)
 {
-	return (
-		((QTUtils_GetQTVersion() >> 16) & 0xffff) >= kQTVideoEffectsMinVers);
+	return (Boolean)(((QTUtils_GetQTVersion() >> 16) & 0xffff) >=
+		kQTVideoEffectsMinVers);
 }
 
 //////////
@@ -266,7 +266,8 @@ Boolean QTUtils_HasQuickTimeVideoEffects(void)
 
 Boolean QTUtils_HasFullScreenSupport(void)
 {
-	return (((QTUtils_GetQTVersion() >> 16) & 0xffff) >= kQTFullScreenMinVers);
+	return (Boolean)(((QTUtils_GetQTVersion() >> 16) & 0xffff) >=
+		kQTFullScreenMinVers);
 }
 
 //////////
@@ -281,8 +282,8 @@ Boolean QTUtils_HasFullScreenSupport(void)
 
 Boolean QTUtils_HasWiredSprites(void)
 {
-	return (
-		((QTUtils_GetQTVersion() >> 16) & 0xffff) >= kQTWiredSpritesMinVers);
+	return (Boolean)(((QTUtils_GetQTVersion() >> 16) & 0xffff) >=
+		kQTWiredSpritesMinVers);
 }
 
 //////////
@@ -323,8 +324,8 @@ Boolean QTUtils_IsQTVRMovie(Movie theMovie)
 
 Boolean QTUtils_IsStreamedMovie(Movie theMovie)
 {
-	return (GetMovieIndTrackType(theMovie, 1, kQTSStreamMediaType,
-				movieTrackMediaType | movieTrackEnabledOnly) != NULL);
+	return (Boolean)(GetMovieIndTrackType(theMovie, 1, kQTSStreamMediaType,
+						 movieTrackMediaType | movieTrackEnabledOnly) != NULL);
 }
 
 //////////
@@ -715,8 +716,8 @@ Boolean QTUtils_IsControllerButtonVisible(MovieController theMC, long theButton)
 
 Boolean QTUtils_IsMediaTypeInMovie(Movie theMovie, OSType theMediaType)
 {
-	return (GetMovieIndTrackType(theMovie, 1, theMediaType,
-				movieTrackMediaType | movieTrackEnabledOnly) != NULL);
+	return (Boolean)(GetMovieIndTrackType(theMovie, 1, theMediaType,
+						 movieTrackMediaType | movieTrackEnabledOnly) != NULL);
 }
 
 //////////
@@ -728,8 +729,8 @@ Boolean QTUtils_IsMediaTypeInMovie(Movie theMovie, OSType theMediaType)
 
 Boolean QTUtils_MovieHasTimeCodeTrack(Movie theMovie)
 {
-	return (GetMovieIndTrackType(
-				theMovie, 1, TimeCodeMediaType, movieTrackMediaType) != NULL);
+	return (Boolean)(GetMovieIndTrackType(theMovie, 1, TimeCodeMediaType,
+						 movieTrackMediaType) != NULL);
 }
 
 //////////
@@ -741,8 +742,9 @@ Boolean QTUtils_MovieHasTimeCodeTrack(Movie theMovie)
 
 Boolean QTUtils_MovieHasSoundTrack(Movie theMovie)
 {
-	return (GetMovieIndTrackType(theMovie, 1, AudioMediaCharacteristic,
-				movieTrackCharacteristic | movieTrackEnabledOnly) != NULL);
+	return (
+		Boolean)(GetMovieIndTrackType(theMovie, 1, AudioMediaCharacteristic,
+					 movieTrackCharacteristic | movieTrackEnabledOnly) != NULL);
 }
 
 //////////
@@ -1434,7 +1436,7 @@ char* QTUtils_MakeTrackNameByType(Track theTrack)
 				myName[++myName[0]] = ' ';
 				BlockMoveData(
 					&myNumString[1], &myName[myName[0] + 1], myNumString[0]);
-				myName[0] += myNumString[0];
+				myName[0] = (unsigned char)(myName[0] + myNumString[0]);
 			}
 
 			// now copy the string data from the Pascal string to a C string
@@ -1466,7 +1468,7 @@ Boolean QTUtils_IsImageFile(FSSpec* theFSSpec)
 	if (myImporter != NULL) {
 		CloseComponent(myImporter);
 	}
-	return (myImporter != NULL);
+	return (Boolean)(myImporter != NULL);
 }
 
 //////////

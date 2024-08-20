@@ -51,6 +51,11 @@
 
 #include "QTTimeCode.h"
 
+#if defined(_MSC_VER)
+// Conversion from function pointer to data pointer
+#pragma warning(disable : 4054)
+#endif
+
 //////////
 //
 // global variables
