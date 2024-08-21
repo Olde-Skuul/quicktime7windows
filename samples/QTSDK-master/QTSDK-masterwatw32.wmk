@@ -175,7 +175,7 @@ INCLUDE_DIRS +=;../../CIncludes
 # Set the compiler flags for each of the build types
 #
 
-CFlagsReleasew32= -bm -bt=NT -dTYPE_BOOL=1 -dTARGET_CPU_X86=1 -dTARGET_OS_WIN32=1 -i="$(%WATCOM)/h;$(%WATCOM)/h/nt" -d0 -oaxsh -xs -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN32 -D_CONSOLE -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS
+CFlagsReleasew32= -bm -bt=NT -dTYPE_BOOL=1 -dTARGET_CPU_X86=1 -dTARGET_OS_WIN32=1 -i="$(%WATCOM)/h;$(%WATCOM)/h/nt;$(%WATCOM)/h/nt/directx" -d0 -oaxsh -xs -DNDEBUG -D_WINDOWS -DWIN32_LEAN_AND_MEAN -DWIN32 -D_CONSOLE -D_CRT_NONSTDC_NO_WARNINGS -D_CRT_SECURE_NO_WARNINGS
 
 #
 # Set the assembler flags for each of the build types
