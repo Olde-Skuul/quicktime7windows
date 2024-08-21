@@ -25,7 +25,7 @@ Run ``makeprojects`` in the folders WatcomLibraries, movie_from_ref, QTSDK-maste
 
 ### Windows
 
-Visual Studio 2022 or OpenWatcom 1.9 or Metrowerks CodeWarrior 9.4 for Windows
+Visual Studio 2003, Visual Studio 2022, OpenWatcom 1.9, or Metrowerks CodeWarrior 9.4 for Windows
 
 Open the sample projects, build, and run.
 
