@@ -1,1 +1,6 @@
 *.r text linguist-language=Rez
+*.exe filter=lfs diff=lfs merge=lfs -text
+*.lib filter=lfs diff=lfs merge=lfs -text
+*.chm filter=lfs diff=lfs merge=lfs -text
+*.obj filter=lfs diff=lfs merge=lfs -text
+*.mcp filter=lfs diff=lfs merge=lfs -text

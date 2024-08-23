@@ -17,6 +17,10 @@
 **/bin
 **/temp
 **/ipch
+**/* Data
+**/*_Data
+**/xcuserdata
+.vscode
 
 # Allow this folder to be saved
 !/tools/bin
