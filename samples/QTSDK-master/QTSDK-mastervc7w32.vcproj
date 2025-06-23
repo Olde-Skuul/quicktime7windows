@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release_LTCG|Win32"
-			OutputDirectory="bin\"
-			IntermediateDirectory="temp\QTSDK-mastervc7w32ltc\"
+			OutputDirectory="$(ProjectDir)bin\"
+			IntermediateDirectory="$(ProjectDir)temp\QTSDK-mastervc7w32ltc\"
 			ConfigurationType="1"
 			WholeProgramOptimization="TRUE">
 			<Tool
@@ -26,7 +26,6 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
-				WholeProgramOptimization="TRUE"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="source;..\..\CIncludes"
@@ -48,7 +47,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="Kernel32.lib Gdi32.lib Shell32.lib Ole32.lib User32.lib Advapi32.lib version.lib Ws2_32.lib Comctl32.lib WinMM.lib QTMLClient.lib"
 				OutputFile="&quot;$(OutDir)QTSDK-mastervc7w32ltc.exe&quot;"
-				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\Libraries"
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="&quot;$(OutDir)$(TargetName).pdb&quot;"
@@ -84,34 +82,34 @@
 		<Filter
 			Name="source">
 			<File
-				RelativePath="source\QTSDK.cpp">
+				RelativePath=".\source\QTSDK.cpp">
 			</File>
 			<File
-				RelativePath="source\QTSDK.h">
+				RelativePath=".\source\QTSDK.h">
 			</File>
 			<File
-				RelativePath="source\arghandler.cpp">
+				RelativePath=".\source\arghandler.cpp">
 			</File>
 			<File
-				RelativePath="source\arghandler.h">
+				RelativePath=".\source\arghandler.h">
 			</File>
 			<File
-				RelativePath="source\disney24.cpp">
+				RelativePath=".\source\disney24.cpp">
 			</File>
 			<File
-				RelativePath="source\disney24.h">
+				RelativePath=".\source\disney24.h">
 			</File>
 			<File
-				RelativePath="source\stringtools.cpp">
+				RelativePath=".\source\stringtools.cpp">
 			</File>
 			<File
-				RelativePath="source\stringtools.h">
+				RelativePath=".\source\stringtools.h">
 			</File>
 			<File
-				RelativePath="source\vectortools.cpp">
+				RelativePath=".\source\vectortools.cpp">
 			</File>
 			<File
-				RelativePath="source\vectortools.h">
+				RelativePath=".\source\vectortools.h">
 			</File>
 		</Filter>
 	</Files>

@@ -28,7 +28,7 @@ As just described, you create a Movie with a video track in memory, with media f
 
 (Note: these are big-endian)
 
-```
+```text
     0x00000008
     0x77696465
     0x00000000
@@ -58,15 +58,15 @@ This file also contains the special 16-byte 'mdat' atom at the beginning of the 
 
 The sample is built as a command-line tool on both Mac and Windows.
 
-Projects are generated using ``makeprojects``. Run the python script ``generate_projects.py`` to regenerate them.
+Projects are generated using ``makeprojects``. Run the python tool ``makeprojects`` to regenerate them.
 
-On Macintosh, an Xcode 3.1.4 project is provided. 
+On Macintosh, an Xcode 3.1.4 project is provided.
 
 On Windows, Microsoft Visual Studio 2022 C++, Open Watcom 1.9, and Codewarrior 9 for Windows projects are provided.
 
 ## RUNNING THE SAMPLE
 
-This command-line tool expects only an "-input" parameter which specifies the video frames file from which the movie will be constructed. A sample video frames file "VideoFrames" is provided. 
+This command-line tool expects only an "-input" parameter which specifies the video frames file from which the movie will be constructed. A sample video frames file "VideoFrames" is provided.
 
 **IMPORTANT:** When you run the tool the specified video frames file is converted into a QuickTime movie -- you need only append the ".mov" extension to the file name after running the tool and it should open in QuickTime Player when you double-click the file. The file is **OVERWRITTEN**
 

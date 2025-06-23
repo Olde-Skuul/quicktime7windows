@@ -34,6 +34,3 @@ Open the sample projects, build, and run.
 For movie_from_ref and QTSDK-master, XCode for MacOS X. For QTTimeCode, Metrowerks CodeWarrior 10.0 (Can be run from Mac OS X Snow Leopard).
 
 Open the samples projects, build, and run. QTTimeCode runs as a MacOS Carbon App, so MacOS X up to Snow Leopard can run it.
-
-
-

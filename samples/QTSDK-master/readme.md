@@ -1,8 +1,9 @@
 # QTSDK
 
-This sample was taken from PixelOmen's repository [https://github.com/PixelOmen/QTSDK](https://github.com/PixelOmen/QTSDK). Updated to use the modern Quicktime SDK using Visual Studio 2022, Open Watcom, Codewarrior, and XCode. 
+This sample was taken from PixelOmen's repository [https://github.com/PixelOmen/QTSDK](https://github.com/PixelOmen/QTSDK). Updated to use the modern Quicktime SDK using Visual Studio 2022, Open Watcom, Codewarrior, and XCode.
 
 ## What is QTSDK
+
 QTSDK is a command-line program that utilizes the QuickTime 7 SDK to perform various operations on QuickTime files on Windows.
 
 ## Features
@@ -30,7 +31,7 @@ QTSDK requires specific command-line arguments to operate on QuickTime files. Th
 
 - `-setTC -fps X -tc "HH:MM:SS:FF"`: Sets the timecode of the QuickTime file with the specified frames per second (fps) and timecode (tc).
 
-##### Optional arguments:
+### Optional arguments
 
 - `-me6ch`: Specifies that there are 6 channels of M&E and they should be flagged as L/R/L/R/L/R. Requires channel range to be 6 channels, e.g. `1,6`
 

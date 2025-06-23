@@ -13,8 +13,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release_LTCG|Win32"
-			OutputDirectory="bin\"
-			IntermediateDirectory="temp\movie_from_refvc7w32ltc\"
+			OutputDirectory="$(ProjectDir)bin\"
+			IntermediateDirectory="$(ProjectDir)temp\movie_from_refvc7w32ltc\"
 			ConfigurationType="1"
 			WholeProgramOptimization="TRUE">
 			<Tool
@@ -26,7 +26,6 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				EnableFiberSafeOptimizations="TRUE"
-				WholeProgramOptimization="TRUE"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories="source;..\..\CIncludes"
@@ -48,7 +47,6 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="Kernel32.lib Gdi32.lib Shell32.lib Ole32.lib User32.lib Advapi32.lib version.lib Ws2_32.lib Comctl32.lib WinMM.lib QTMLClient.lib"
 				OutputFile="&quot;$(OutDir)movie_from_refvc7w32ltc.exe&quot;"
-				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\Libraries"
 				GenerateDebugInformation="FALSE"
 				ProgramDatabaseFile="&quot;$(OutDir)$(TargetName).pdb&quot;"
@@ -84,7 +82,7 @@
 		<Filter
 			Name="source">
 			<File
-				RelativePath="source\main.cpp">
+				RelativePath=".\source\main.cpp">
 			</File>
 		</Filter>
 	</Files>

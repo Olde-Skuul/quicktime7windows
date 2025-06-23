@@ -254,7 +254,7 @@
 				<SETTING><NAME>MWLinker_X86_symfullpath</NAME><VALUE>false</VALUE></SETTING>
 				<SETTING><NAME>MWLinker_X86_linkdebug</NAME><VALUE>true</VALUE></SETTING>
 				<SETTING><NAME>MWLinker_X86_debuginline</NAME><VALUE>true</VALUE></SETTING>
-				<SETTING><NAME>MWLinker_X86_subsystem</NAME><VALUE>Unknown</VALUE></SETTING>
+				<SETTING><NAME>MWLinker_X86_subsystem</NAME><VALUE>WinGUI</VALUE></SETTING>
 				<SETTING><NAME>MWLinker_X86_entrypointusage</NAME><VALUE>Default</VALUE></SETTING>
 				<SETTING><NAME>MWLinker_X86_entrypoint</NAME><VALUE></VALUE></SETTING>
 				<SETTING><NAME>MWLinker_X86_codefolding</NAME><VALUE>Any</VALUE></SETTING>

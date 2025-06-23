@@ -31,6 +31,10 @@ CONTINUE = False
 # Can be overridden above
 GENERIC = True
 
+# Process these folders before processing this folder
+# Can be overridden above
+BUILDME_DEPENDENCIES = ["movie_from_ref", "QTSDK-master", "QTTimeCode"]
+
 # ``cleanme`` will assume only the function ``clean()`` is used if False.
 # Overrides PROCESS_PROJECT_FILES
 CLEANME_PROCESS_PROJECT_FILES = False
